@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #212529;
+    color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+}
+h2 {
+    font-size: 24px;
+    margin: 0;
+    padding: 20px;
+    background-color: #212529;
+    width: 100%;
+    text-align: center;
+    color: #f8f9fa;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+form {
+    margin-top: 80px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #f8f9fa;
+}
+label {
+    margin-right: 10px;
+}
+input[type="text"] {
+    padding: 8px;
+    font-size: 14px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+input[type="submit"] {
+    padding: 8px 16px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+}
+input[type="submit"]:hover {
+    background-color: #218838;
+}
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #343a40;
+    border-radius: 8px;
+    overflow: hidden;
+}
+th, td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #495057;
+}
+th {
+    background-color: #495057;
+}
+td {
+    background-color: #212529;
+}
+tr:nth-child(even) td {
+    background-color: #343a40;
+}
+tr:hover {
+    background-color: #495057;
+}
+td a {
+    color: #ffc107;
+    text-decoration: none;
+}
+td a:hover {
+    text-decoration: underline;
+}
+a[href="cadastrarAdministrador.html"] {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #17a2b8;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+}
+a[href="cadastrarAdministrador.html"]:hover {
+    background-color: #138496;
+}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Usuário</title>
+    <link rel="stylesheet" href="./css/cadastrarAdministrador.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-box">
+            <h2>Cadastrar Usuário</h2>
+            <form id="adminForm" action="salvarAdministrador.jsp" method="POST" onsubmit="return validateForm()">
+                <label for="nome">Nome</label>
+                <input type="text" id="nome" name="nome" size="100" maxlength="100" placeholder="Digite seu nome" />
+
+                <label for="email">E-mail (Gmail)</label>
+                <input type="email" id="email" name="email" size="100" maxlength="100" required placeholder="Digite seu e-mail" />
+
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" size="255" maxlength="255" required placeholder="Digite sua senha" />
+
+                <label for="confirmarSenha">Confirmar Senha</label>
+                <input type="password" id="confirmarSenha" name="confirmarSenha" size="255" maxlength="255" required placeholder="Digite novamente a senha" />
+
+                <div id="senhaError" style="color: red; display: none;">As senhas não coincidem!</div>
+
+                <label for="cpf">CPF</label>
+                <input type="text" id="cpf" name="cpf" required placeholder="Digite seu CPF" size="14" maxlength="14" oninput="mascaraCPF(this)" />
+
+                <label for="grupo">Grupo</label>
+                <select id="grupo" name="grupo" required>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Estoquista">Estoquista</option>
+                </select>
+                
+                <button type="submit">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function mascaraCPF(campo) {
+            var cpf = campo.value.replace(/\D/g, '');
+            if (cpf.length <= 11) {
+                campo.value = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            }
+        }
+        function validateForm() {
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            const cpf = document.getElementById('cpf').value;
+            document.getElementById('senha').style.borderColor = '';
+            document.getElementById('confirmarSenha').style.borderColor = '';
+            document.getElementById('senhaError').style.display = 'none';
+            if (senha !== confirmarSenha) {
+                document.getElementById('senha').style.borderColor = 'red';
+                document.getElementById('confirmarSenha').style.borderColor = 'red';
+                document.getElementById('senhaError').style.display = 'block';
+                return false;
+            }
+            if (!validarCPF(cpf)) {
+                alert("CPF inválido.");
+                return false;
+            }
+            const hashedPassword = CryptoJS.SHA256(senha).toString();
+            document.getElementById('senha').value = hashedPassword;
+            document.getElementById('confirmarSenha').value = hashedPassword;
+            return true;
+        }
+        function validarCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+            if (cpf.length !== 11) return false;
+            let soma = 0;
+            let resto;
+            for (let i = 1; i <= 9; i++) {
+                soma += parseInt(cpf.charAt(i - 1)) * (11 - i);
+            }
+            resto = (soma * 10) % 11;
+            if ((resto === 10) || (resto === 11)) resto = 0;
+            if (resto !== parseInt(cpf.charAt(9))) return false;
+            soma = 0;
+            for (let i = 1; i <= 10; i++) {
+                soma += parseInt(cpf.charAt(i - 1)) * (12 - i);
+            }
+            resto = (soma * 10) % 11;
+            if ((resto === 10) || (resto === 11)) resto = 0;
+            if (resto !== parseInt(cpf.charAt(10))) return false;
+            return true;
+        }
+    </script>
+</body>
+</html>

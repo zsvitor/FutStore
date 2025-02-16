@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="./css/loginAdministrador.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Login</h2>
+            <p>Digite os seus dados de acesso no campo abaixo.</p>
+            <form id="loginForm" action="logarAdministrador.jsp" method="POST" onsubmit="return encryptPassword()">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" size="100" maxlength="100" required placeholder="Digite seu e-mail" />
+
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" size="255" maxlength="255" required placeholder="Digite sua senha" />
+
+                <button type="button" onclick="window.location.href='backoffice.html'">Acessar</button>
+            </form>
+        </div>
+    </div>
+    <!-- SHA-256 -->
+    <script>
+        function encryptPassword() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if (!email.endsWith("@gmail.com")) {
+                alert("Acesso permitido apenas para contas Gmail");
+                return false;
+            }
+            const hashedPassword = CryptoJS.SHA256(password).toString();
+            document.getElementById('password').value = hashedPassword;
+            return true;
+        }
+    </script>
+</body>
+</html>
