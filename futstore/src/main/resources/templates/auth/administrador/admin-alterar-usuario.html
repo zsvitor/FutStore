@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Alterar Usuário</title>
+
+<link rel="stylesheet" th:href="@{/bootstrap-5.1.3-dist/css/bootstrap.min.css}">
+<script th:src="@{/jquery-3.6.0-dist/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/bootstrap-5.1.3-dist/js/bootstrap.min.js}"></script>
+
+<style>
+.mensagem {
+  color: red;
+}
+</style>
+</head>
+<body>
+<div th:replace="fragments/publica-nav :: nav"></div>
+<div class="container">
+  <div class="row">  
+    <div class="col">
+        <h2>Alterar Usuário</h2> 
+        <form th:action="@{/usuario/editar/{id}(id=${usuario.id})}" th:object="${usuario}" method="post">
+              
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Nome:</label>
+                <div class="col-sm-5">
+                    <input class="form-control" type="text" th:field="*{nome}"> 
+                </div>
+                <div class="col-sm-5"> 
+                    <span class="mensagem" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
+                </div>              
+            </div>
+            
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">CPF:</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" th:field="*{cpf}"> 
+                </div>
+                <div class="col-sm-5"> 
+                    <span class="mensagem" th:if="${#fields.hasErrors('cpf')}" th:errors="*{cpf}"></span>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Senha:</label>
+                <div class="col-sm-5">
+                    <input class="form-control" type="password" th:field="*{senha}" id="senha"> 
+                </div>
+                <div class="col-sm-5"> 
+                    <span class="mensagem" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Confirmar Senha:</label>
+                <div class="col-sm-5">
+                    <input class="form-control" type="password" id="confirmarSenha"> 
+                </div>
+                <div class="col-sm-5"> 
+                    <span class="mensagem" id="erroSenha"></span>
+                </div>
+            </div>
+			
+			<div class="row mb-3">
+			    <label class="col-sm-2 col-form-label" for="papel">Papel:</label>
+			    <div class="col-sm-5">
+			        <select id="papel" th:field="*{papel}" class="form-control" required>
+			            <option th:each="papel : ${papeis}" 
+			                    th:value="${papel}" 
+			                    th:text="${papel}">
+			            </option>
+			        </select>
+			    </div>
+			</div>
+            
+            <input class="btn btn-primary" type="submit" value="Alterar" onclick="return validarSenha()"/>
+        </form>
+    </div>
+</div>
+</div>
+
+<script>
+function validarSenha() {
+    let senha = document.getElementById("senha").value;
+    let confirmarSenha = document.getElementById("confirmarSenha").value;
+    let erroSenha = document.getElementById("erroSenha");
+
+    if (senha !== confirmarSenha) {
+        erroSenha.textContent = "As senhas não coincidem.";
+        return false;
+    } else {
+        erroSenha.textContent = "";
+        return true;
+    }
+}
+</script>
+
+</body>
+</html>
