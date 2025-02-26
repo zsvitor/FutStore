@@ -10,7 +10,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" th:href="${#authorization.expression('hasRole(''ADMINISTRADOR'')') ? '/auth/administrador/admin-index' : 
 			             #authorization.expression('hasRole(''ESTOQUISTA'')') ? '/auth/estoquista/estoq-index' : '/'}">
-                FutStore - Sistema Administrativo
+                FutStore | Sistema Administrativo
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,10 +25,10 @@
                         <a class="nav-link" th:href="@{/estoque}">Produtos</a>
                     </li>
                 </ul>
-                <div class="navbar-nav">
-                    <div sec:authorize="isAuthenticated()">
+                <div class="navbar-nav d-flex align-items-center">
+                    <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
                         <span class="nav-item nav-link text-light">Olá, <span sec:authentication="name"></span></span>
-                        <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">Sair</a>
+                        <a class="btn btn-outline-light btn-sm ms-2" th:href="@{/logout}">Sair</a>
                     </div>
                     <div sec:authorize="!isAuthenticated()">
                         <a class="nav-link" th:href="@{/login}">Login</a>

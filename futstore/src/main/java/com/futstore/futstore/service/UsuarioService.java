@@ -1,5 +1,7 @@
 package com.futstore.futstore.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,10 @@ public class UsuarioService {
             usuarioBanco.setSenha(passwordEncoder.encode(usuario.getSenha()));
         }  
         return usuarioRepository.save(usuarioBanco);
+    }
+    
+    public List<Usuario> findByNomeContaining(String nome) {
+        return usuarioRepository.findByNomeContainingIgnoreCase(nome);
     }
     
 }

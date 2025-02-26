@@ -9,44 +9,53 @@
     <script th:src="@{/bootstrap-5.1.3-dist/js/bootstrap.min.js}"></script>
 
     <style>
-        .mensagem {
-            color: red;
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 500px;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center">Login</h3>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${param.error}" class="alert alert-danger">
-                            Email ou senha inválidos.
-                        </div>
-                        <div th:if="${param.logout}" class="alert alert-success">
-                            Você saiu do sistema.
-                        </div>
-                        <form th:action="@{/login}" method="post">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Gmail:</label>
-                                <input id="username" name="username" class="form-control" type="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Senha:</label>
-                                <input id="password" name="password" class="form-control" type="password" required>
-                            </div>
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-primary" type="submit">Entrar</button>
-                            </div>
-                        </form>
-                    </div>
+    <div class="login-container">
+        <div class="card shadow">
+            <div class="card-header">
+                <h3 class="text-center">FutStore</h3>
+            </div>
+            <div class="card-body">
+                <div th:if="${param.error}" class="alert alert-danger">
+                    Email ou senha inválidos.
                 </div>
+                <div th:if="${param.logout}" class="alert alert-success">
+                    Você saiu do sistema.
+                </div>
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Gmail:</label>
+                        <input id="username" name="username" class="form-control" type="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Senha:</label>
+                        <input id="password" name="password" class="form-control" type="password" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" type="submit">Entrar</button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 </body>
 
 </html>
