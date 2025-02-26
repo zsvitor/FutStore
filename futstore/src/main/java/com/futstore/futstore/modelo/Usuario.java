@@ -94,4 +94,5 @@ public class Usuario {
     public void setPapel(PapelUsuario papel) {
         this.papel = papel;
     }
+    
 }
