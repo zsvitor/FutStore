@@ -41,9 +41,6 @@ public class UsuarioController {
 	@PostMapping("/salvar")
 	public String salvarUsuario(@Valid Usuario usuario, BindingResult result, RedirectAttributes attributes,
 			Model model) {
-		if (usuarioRepository.existsByCpf(usuario.getCpf())) {
-			result.rejectValue("cpf", "cpf.existente", "CPF já cadastrado.");
-		}
 		if (usuarioRepository.existsByGmail(usuario.getGmail())) {
 			result.rejectValue("gmail", "gmail.existente", "Gmail já cadastrado.");
 		}

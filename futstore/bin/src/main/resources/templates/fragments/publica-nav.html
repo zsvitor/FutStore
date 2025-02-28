@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <nav th:fragment="nav" class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="${#authorization.expression('hasRole(''ADMINISTRADOR'')') ? '/auth/administrador/admin-index' : 
+			             #authorization.expression('hasRole(''ESTOQUISTA'')') ? '/auth/estoquista/estoq-index' : '/'}">
+                FutStore | Sistema Administrativo
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')">
+                        <a class="nav-link" th:href="@{/usuario/administrador/listar}">Usuários</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ESTOQUISTA')">
+                        <a class="nav-link" th:href="@{/estoque}">Produtos</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav d-flex align-items-center">
+                    <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
+                        <span class="nav-item nav-link text-light">Olá, <span sec:authentication="name"></span></span>
+                        <a class="btn btn-outline-light btn-sm ms-2" th:href="@{/logout}">Sair</a>
+                    </div>
+                    <div sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" th:href="@{/login}">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</body>
+
+</html>
