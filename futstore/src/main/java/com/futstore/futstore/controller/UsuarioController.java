@@ -50,8 +50,7 @@ public class UsuarioController {
 		}
 		usuario.setAtivo(true);
 		usuarioService.salvar(usuario);
-		attributes.addFlashAttribute("mensagem", "Usuário salvo com sucesso!");
-		return "redirect:/usuario/novo";
+		return "redirect:/usuario/administrador/listar";
 	}
 
 	@RequestMapping("/administrador/listar")

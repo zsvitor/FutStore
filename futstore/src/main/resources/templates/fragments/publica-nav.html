@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head>
     <meta charset="UTF-8">
 </head>
-
 <body>
     <nav th:fragment="nav" class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -21,9 +19,12 @@
                     <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')">
                         <a class="nav-link" th:href="@{/usuario/administrador/listar}">Usuários</a>
                     </li>
-                    <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ESTOQUISTA')">
-                        <a class="nav-link" th:href="@{/estoque}">Produtos</a>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR')">
+                        <a class="nav-link" th:href="@{/produto/administrador/listar}">Produtos</a>
                     </li>
+					<li class="nav-item" sec:authorize="hasAnyRole('ESTOQUISTA')">
+					    <a class="nav-link" th:href="@{/produto/estoquista/listar}">Produtos</a>
+					</li>
                 </ul>
                 <div class="navbar-nav d-flex align-items-center">
                     <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
@@ -38,5 +39,4 @@
         </div>
     </nav>
 </body>
-
 </html>
