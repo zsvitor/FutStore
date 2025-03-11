@@ -1,18 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>BackOffice</title>
-
 	<link rel="stylesheet" th:href="@{/bootstrap-5.1.3-dist/css/bootstrap.min.css}">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 	<script th:src="@{/jquery-3.6.0-dist/jquery-3.6.0.min.js}"></script>
 	<script th:src="@{/bootstrap-5.1.3-dist/js/bootstrap.min.js}"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.7/inputmask.min.js"></script>
 </head>
-
 <body>
 	<div th:replace="fragments/publica-nav :: nav"></div>
 	<div class="main-content" style="margin-top: 50px;">
@@ -28,7 +25,6 @@
 								<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 								<i class="fas fa-check-circle me-2"></i><span th:text="${mensagem}"></span>
 							</div>
-
 							<form th:action="@{/usuario/editar/{id}(id=${usuario.id})}" th:object="${usuario}"
 								method="post">
 								<div class="row mb-4">
@@ -42,7 +38,6 @@
 											th:errors="*{nome}"></span>
 									</div>
 								</div>
-
 								<div class="row mb-4">
 									<label class="col-sm-3 col-form-label">
 										<i class="fas fa-id-card me-2"></i>CPF:
@@ -54,7 +49,6 @@
 											th:errors="*{cpf}"></span>
 									</div>
 								</div>
-
 								<div class="row mb-4">
 									<label class="col-sm-3 col-form-label">
 										<i class="fas fa-lock me-2"></i>Senha:
@@ -71,7 +65,6 @@
 											th:errors="*{senha}"></span>
 									</div>
 								</div>
-
 								<div class="row mb-4">
 									<label class="col-sm-3 col-form-label">
 										<i class="fas fa-lock me-2"></i>Confirmar Senha:
@@ -88,7 +81,6 @@
 										<span class="mensagem text-danger" id="erroSenha"></span>
 									</div>
 								</div>
-
 								<div class="row mb-4">
 									<label class="col-sm-3 col-form-label" for="papel">
 										<i class="fas fa-users-cog me-2"></i>Papel:
@@ -105,7 +97,6 @@
 										</small>
 									</div>
 								</div>
-
 								<div class="d-flex justify-content-end mt-4">
 									<a href="/usuario/administrador/listar" class="btn btn-outline-secondary me-2">
 										<i class="fas fa-times me-2"></i>Cancelar
@@ -121,7 +112,6 @@
 			</div>
 		</div>
 	</div>
-
 	<script>
 		function validarSenha() {
 			let senha = document.getElementById("senha").value;
@@ -136,7 +126,6 @@
 				return true;
 			}
 		}
-
 		document.addEventListener('DOMContentLoaded', function () {
 			const togglePassword = document.getElementById('togglePassword');
 			const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
@@ -149,14 +138,12 @@
 				this.querySelector('i').classList.toggle('fa-eye');
 				this.querySelector('i').classList.toggle('fa-eye-slash');
 			});
-
 			toggleConfirmPassword.addEventListener('click', function () {
 				const type = confirmarSenhaInput.getAttribute('type') === 'password' ? 'text' : 'password';
 				confirmarSenhaInput.setAttribute('type', type);
 				this.querySelector('i').classList.toggle('fa-eye');
 				this.querySelector('i').classList.toggle('fa-eye-slash');
 			});
-
 			const cpfInput = document.getElementById('cpfInput');
 			if (cpfInput) {
 				cpfInput.addEventListener('input', function (e) {
@@ -176,7 +163,6 @@
 
 					e.target.value = value;
 				});
-
 				if (cpfInput.value) {
 					const event = new Event('input', {bubbles: true});
 					cpfInput.dispatchEvent(event);
@@ -185,5 +171,4 @@
 		});
 	</script>
 </body>
-
 </html>

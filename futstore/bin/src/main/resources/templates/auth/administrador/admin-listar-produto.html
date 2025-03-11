@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BackOffice</title>
+    <link rel="stylesheet" th:href="@{/bootstrap-5.1.3-dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script th:src="@{/jquery-3.6.0-dist/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/bootstrap-5.1.3-dist/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <div th:replace="fragments/publica-nav :: nav"></div>
+    <div class="main-content" style="margin-top: 50px;">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Lista de Produtos</h1>
+                <a href="/produto/novo" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Cadastrar Novo Produto
+                </a>
+            </div>
+            <div class="search-filter">
+                <form th:action="@{/produto/administrador/listar}" method="get">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0" placeholder="Filtrar por nome do produto"
+                            name="filtroNome" th:value="${filtroNome}">
+                        <button class="btn btn-primary" type="submit">Filtrar</button>
+                        <a th:href="@{/produto/administrador/listar}" class="btn btn-outline-secondary">Limpar</a>
+                    </div>
+                </form>
+            </div>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <table class="table mb-0 text-center">
+                        <thead>
+							<tr>
+							    <th><i class="fas fa-barcode me-2"></i>Código</th>
+							    <th><i class="fas fa-tshirt me-2"></i>Nome</th>
+							    <th><i class="fas fa-boxes me-2"></i>Quantidade em Estoque</th>
+							    <th><i class="fas fa-dollar-sign me-2"></i>Valor</th>
+							    <th><i class="fas fa-toggle-on me-2"></i>Status</th>
+							    <th><i class="fas fa-cogs me-2"></i>Ações</th>
+							</tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${produtos.empty}">
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="fas fa-tshirt fa-3x text-muted mb-3 d-block"></i>
+                                    <p class="text-muted">Nenhum produto encontrado</p>
+                                </td>
+                            </tr>
+                            <tr th:each="produto : ${produtos}">
+                                <td th:text="${produto.id}">Código</td>
+                                <td th:text="${produto.nome}">Nome</td>
+                                <td th:text="${produto.quantidadeEstoque}">Quantidade</td>
+                                <td th:text="${#numbers.formatCurrency(produto.preco)}">Valor</td>
+                                <td>
+                                    <span class="badge bg-success px-3 py-2" th:if="${produto.ativo}">Ativo</span>
+                                    <span class="badge bg-secondary px-3 py-2"
+                                        th:unless="${produto.ativo}">Inativo</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a class="btn btn-outline-danger btn-sm"
+                                            th:href="@{/produto/administrador/trocar-status/{id}(id=${produto.id})}"
+                                            th:data-confirm-toggle="|Você gostaria de alterar o status de ${produto.nome}?|"
+                                            onclick="if (!confirm(this.getAttribute('data-confirm-toggle'))) return false">
+                                            <i class="fas fa-tshirt"></i>
+                                            <span th:text="${produto.ativo} ? 'Inativar' : 'Ativar'">Status</span>
+                                        </a>
+
+                                        <a class="btn btn-outline-primary btn-sm"
+                                            th:href="@{/produto/editar/{id}(id=${produto.id})}">
+                                            <i class="fas fa-edit me-1"></i>Editar
+                                        </a>
+                                        <a class="btn btn-outline-info btn-sm"
+                                            th:href="@{/produto/visualizar/{id}(id=${produto.id})}">
+                                            <i class="fas fa-eye me-1"></i>Visualizar
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <nav aria-label="Navegação de página" class="mt-3" th:if="${totalPaginas > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${paginaAtual == 0} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/produto/administrador/listar(page=0, filtroNome=${filtroNome})}"
+                            aria-label="Primeira">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${paginaAtual == 0} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/produto/administrador/listar(page=${paginaAtual - 1}, filtroNome=${filtroNome})}"
+                            aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="pagina : ${#numbers.sequence(
+                            (paginaAtual - 2 > 0) ? paginaAtual - 2 : 0, 
+                            (paginaAtual + 2 < totalPaginas - 1) ? paginaAtual + 2 : totalPaginas - 1
+                        )}" th:classappend="${pagina == paginaAtual} ? 'active'">
+                        <a class="page-link"
+                            th:href="@{/produto/administrador/listar(page=${pagina}, filtroNome=${filtroNome})}"
+                            th:text="${pagina + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${paginaAtual == totalPaginas - 1} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/produto/administrador/listar(page=${paginaAtual + 1}, filtroNome=${filtroNome})}"
+                            aria-label="Próximo">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${paginaAtual == totalPaginas - 1} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/produto/administrador/listar(page=${totalPaginas - 1}, filtroNome=${filtroNome})}"
+                            aria-label="Última">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="text-center mt-2">
+                    <small class="text-muted">
+                        Página <strong th:text="${paginaAtual + 1}"></strong> de
+                        <strong th:text="${totalPaginas}"></strong>
+                    </small>
+                </div>
+            </nav>
+        </div>
+    </div>
+</body>
+</html>

@@ -14,30 +14,30 @@ import org.hibernate.validator.constraints.br.CPF;
 
 @Entity
 public class Usuario {
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotNull
-    @Size(min = 3, message = "O nome deve ter no mínimo 3 caracteres")
-    private String nome;
+	@NotNull
+	@Size(min = 3, message = "O nome deve ter no mínimo 3 caracteres")
+	private String nome;
 
-    @Email(message = "Email inválido")
-    private String gmail;
+	@Email(message = "Email inválido")
+	private String gmail;
 
-    @NotEmpty(message = "A senha deve ser informada")
-    @Size(min = 3, message = "A senha deve ter no mínimo 3 caracteres")
-    private String senha;
+	@NotEmpty(message = "A senha deve ser informada")
+	@Size(min = 3, message = "A senha deve ter no mínimo 3 caracteres")
+	private String senha;
 
-    @CPF(message = "CPF inválido")
-    private String cpf;
-    
-    @Enumerated(EnumType.STRING)
-    @NotNull(message = "O papel do usuário deve ser informado")
-    private PapelUsuario papel;
+	@CPF(message = "CPF inválido")
+	private String cpf;
 
-    private boolean ativo;
+	@Enumerated(EnumType.STRING)
+	@NotNull(message = "O papel do usuário deve ser informado")
+	private PapelUsuario papel;
+
+	private boolean ativo;
 
 	public Long getId() {
 		return id;
@@ -88,11 +88,11 @@ public class Usuario {
 	}
 
 	public PapelUsuario getPapel() {
-        return papel;
-    }
+		return papel;
+	}
 
-    public void setPapel(PapelUsuario papel) {
-        this.papel = papel;
-    }
-    
+	public void setPapel(PapelUsuario papel) {
+		this.papel = papel;
+	}
+
 }

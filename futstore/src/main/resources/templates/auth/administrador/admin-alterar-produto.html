@@ -8,6 +8,48 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script th:src="@{/jquery-3.6.0-dist/jquery-3.6.0.min.js}"></script>
     <script th:src="@{/bootstrap-5.1.3-dist/js/bootstrap.min.js}"></script>
+    <style>
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .image-preview {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 5px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .principal-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(25, 135, 84, 0.8);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div th:replace="fragments/publica-nav :: nav"></div>
@@ -24,8 +66,12 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 <i class="fas fa-check-circle me-2"></i><span th:text="${mensagem}"></span>
                             </div>
+                            <div class="alert alert-danger alert-dismissible fade show" th:if="${erro}">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                <i class="fas fa-exclamation-circle me-2"></i><span th:text="${erro}"></span>
+                            </div>
                             <form th:action="@{/produto/editar/{id}(id=${produto.id})}" th:object="${produto}"
-                                method="post">
+                                method="post" enctype="multipart/form-data">
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">
                                         <i class="fas fa-tag me-2"></i>Nome do Produto:
@@ -95,6 +141,44 @@
                                             th:errors="*{quantidadeEstoque}"></span>
                                     </div>
                                 </div>
+                                <div class="row mb-3" th:if="${imagens != null and !imagens.isEmpty()}">
+                                    <label class="col-sm-3 col-form-label">
+                                        <i class="fas fa-images me-2"></i>Imagens Atuais:
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <div class="image-preview-container">
+                                            <div class="image-preview" th:each="img : ${imagens}">
+                                                <img th:src="@{'/'+${img.caminho}}" alt="Imagem do produto">
+                                                <span class="principal-badge" th:if="${img.principal}">PRINCIPAL</span>
+                                                <div class="image-actions">
+                                                    <a th:href="@{/produto/definir-imagem-principal/{produtoId}/{imagemId}(produtoId=${produto.id},imagemId=${img.id})}"
+                                                        class="btn btn-sm btn-success"
+                                                        title="Definir como imagem principal" th:if="${!img.principal}">
+                                                        <i class="fas fa-star"></i>
+                                                    </a>
+                                                    <a th:href="@{/produto/remover-imagem/{produtoId}/{imagemId}(produtoId=${produto.id},imagemId=${img.id})}"
+                                                        class="btn btn-sm btn-danger" title="Remover imagem"
+                                                        onclick="return confirm('Tem certeza que deseja remover esta imagem?');">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-3 col-form-label">
+                                        <i class="fas fa-upload me-2"></i>Adicionar Novas Imagens:
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input type="file" class="form-control" name="files" multiple accept="image/*"
+                                            id="imageInput">
+                                        <small class="form-text text-muted">Selecione uma ou mais imagens para o produto
+                                            (formatos: jpg, png, jpeg)</small>
+                                        <div class="image-preview-container" id="previewContainer"></div>
+                                        <input type="hidden" name="imagemPrincipal" id="imagemPrincipal" value="-1">
+                                    </div>
+                                </div>
                                 <div class="d-flex justify-content-end mt-4">
                                     <a href="/produto/administrador/listar" class="btn btn-outline-secondary me-2">
                                         <i class="fas fa-times me-2"></i>Cancelar
@@ -113,7 +197,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const precoInput = document.getElementById('precoInput');
-
             precoInput.addEventListener('input', function (e) {
                 let value = e.target.value.replace(/[^\d]/g, '');
                 let numero = (parseFloat(value) / 100).toFixed(2);
@@ -124,6 +207,45 @@
             });
             document.querySelector('form').addEventListener('submit', function () {
                 precoInput.value = precoInput.value.replace(',', '.');
+            });
+            const imageInput = document.getElementById('imageInput');
+            const previewContainer = document.getElementById('previewContainer');
+            const imagemPrincipal = document.getElementById('imagemPrincipal');
+            imageInput.addEventListener('change', function () {
+                previewContainer.innerHTML = '';
+                Array.from(this.files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'image-preview';
+                        previewDiv.dataset.index = index;
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        previewDiv.appendChild(img);
+                        const actionsDiv = document.createElement('div');
+                        actionsDiv.className = 'image-actions';
+                        const setPrincipalBtn = document.createElement('button');
+                        setPrincipalBtn.type = 'button';
+                        setPrincipalBtn.className = 'btn btn-sm btn-success';
+                        setPrincipalBtn.innerHTML = '<i class="fas fa-star"></i>';
+                        setPrincipalBtn.title = 'Definir como imagem principal';
+                        setPrincipalBtn.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            imagemPrincipal.value = index;
+                            document.querySelectorAll('.preview-principal-badge').forEach(badge => {
+                                badge.remove();
+                            });
+                            const principalBadge = document.createElement('span');
+                            principalBadge.className = 'principal-badge preview-principal-badge';
+                            principalBadge.innerHTML = 'PRINCIPAL';
+                            previewDiv.appendChild(principalBadge);
+                        });
+                        actionsDiv.appendChild(setPrincipalBtn);
+                        previewDiv.appendChild(actionsDiv);
+                        previewContainer.appendChild(previewDiv);
+                    }
+                    reader.readAsDataURL(file);
+                });
             });
         });
     </script>
