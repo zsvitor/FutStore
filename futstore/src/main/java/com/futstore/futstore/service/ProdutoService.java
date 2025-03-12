@@ -78,7 +78,7 @@ public class ProdutoService {
 				produtoRepository.save(produto);
 			}
 			try {
-				String caminhoAbsoluto = "src/main/resources/static/uploads";
+				String caminhoAbsoluto = "C:\\Users\\Vitor\\Desktop\\Projeto FutStore\\PI_Desenvolvimento_de_Sistemas_Orientados_a_Web\\futstore\\src\\main\\resources\\static\\uploads";
 				File diretorio = new File(caminhoAbsoluto);
 				if (!diretorio.exists()) {
 					diretorio.mkdirs();
@@ -122,7 +122,8 @@ public class ProdutoService {
 				.orElseThrow(() -> new IllegalArgumentException("Imagem inválida: " + imagemId));
 		boolean eraPrincipal = imagem.isPrincipal();
 		Produto produto = imagem.getProduto();
-		String caminhoArquivo = "src/main/resources/static/" + imagem.getCaminho();
+		String caminhoArquivo = "C:\\Users\\Vitor\\Desktop\\Projeto FutStore\\PI_Desenvolvimento_de_Sistemas_Orientados_a_Web\\futstore\\src\\main\\resources\\static\\uploads\\"
+				+ imagem.getCaminho();
 		File arquivo = new File(caminhoArquivo);
 		if (arquivo.exists()) {
 			arquivo.delete();
