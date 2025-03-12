@@ -15,7 +15,7 @@ import java.io.File;
 @RequestMapping("/uploads")
 public class ImagemController {
 
-	private static final String IMAGE_DIRECTORY = "C:\\Users\\Vitor\\Desktop\\Projeto FutStore\\PI_Desenvolvimento_de_Sistemas_Orientados_a_Web\\futstore\\src\\main\\resources\\static\\uploads";
+	private static final String IMAGE_DIRECTORY = "futstore/src/main/resources/static/uploads";
 
 	@GetMapping("/{filename:.+}")
 	@ResponseBody

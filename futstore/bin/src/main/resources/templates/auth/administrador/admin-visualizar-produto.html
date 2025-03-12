@@ -19,7 +19,6 @@
         .carousel-item img {
             height: 400px;
             object-fit: contain;
-            background-color: #f8f9fa;
         }
         .carousel-indicators {
             position: static;
@@ -99,7 +98,6 @@
                 <div class="col-lg-6 mb-4">
                     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
-
                             <div th:each="imagem : ${produto.imagens}" th:if="${imagem.principal}"
                                 class="carousel-item active">
                                 <img th:src="@{'/'+${imagem.caminho}}" class="d-block w-100" th:alt="${produto.nome}">
