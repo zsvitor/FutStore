@@ -33,7 +33,7 @@ public class ProdutoController {
 	@GetMapping("/novo")
 	public String adicionarProduto(Model model) {
 		model.addAttribute("produto", new Produto());
-		return "/auth/administrador/admin-criar-produto";
+		return "/administrativo/auth/administrador/admin-criar-produto";
 	}
 
 	@PostMapping("/salvar")
@@ -42,7 +42,7 @@ public class ProdutoController {
 			@RequestParam(value = "imagemPrincipal", required = false, defaultValue = "0") int imagemPrincipal,
 			RedirectAttributes attributes, Model model) {
 		if (result.hasErrors()) {
-			return "/auth/administrador/admin-criar-produto";
+			return "/administrativo/auth/administrador/admin-criar-produto";
 		}
 		Produto produtoSalvo = produtoService.salvar(produto);
 		if (imagens != null && imagens.length > 0) {
@@ -66,7 +66,7 @@ public class ProdutoController {
 		model.addAttribute("paginaAtual", page);
 		model.addAttribute("totalPaginas", produtosPage.getTotalPages());
 		model.addAttribute("filtroNome", filtroNome);
-		return "/auth/administrador/admin-listar-produto";
+		return "/administrativo/auth/administrador/admin-listar-produto";
 	}
 
 	@GetMapping("/administrador/trocar-status/{id}")
@@ -85,7 +85,7 @@ public class ProdutoController {
 		List<ProdutoImagem> imagens = produtoImagemRepository.findByProdutoOrderById(produto);
 		model.addAttribute("produto", produto);
 		model.addAttribute("imagens", imagens);
-		return "/auth/administrador/admin-alterar-produto";
+		return "/administrativo/auth/administrador/admin-alterar-produto";
 	}
 
 	@PostMapping("/editar/{id}")
@@ -95,7 +95,7 @@ public class ProdutoController {
 			Model model, RedirectAttributes attributes) {
 		if (result.hasErrors()) {
 			produto.setId(id);
-			return "/auth/administrador/admin-alterar-produto";
+			return "/administrativo/auth/administrador/admin-alterar-produto";
 		}
 		produtoService.atualizar(produto, id);
 		if (imagens != null && imagens.length > 0) {
@@ -164,7 +164,7 @@ public class ProdutoController {
 			throw new IllegalArgumentException("Produto inválido: " + id);
 		}
 		model.addAttribute("produto", produtoOptional.get());
-		return "/auth/administrador/admin-visualizar-produto";
+		return "/administrativo/auth/administrador/admin-visualizar-produto";
 	}
 
 	@GetMapping("/estoquista/listar")
@@ -175,7 +175,7 @@ public class ProdutoController {
 		model.addAttribute("paginaAtual", page);
 		model.addAttribute("totalPaginas", produtosPage.getTotalPages());
 		model.addAttribute("filtroNome", filtroNome);
-		return "/auth/estoquista/estoq-listar-produto";
+		return "/administrativo/auth/estoquista/estoq-listar-produto";
 	}
 
 	@GetMapping("/estoquista/editar-estoque/{id}")
@@ -185,7 +185,7 @@ public class ProdutoController {
 			throw new IllegalArgumentException("Produto inválido: " + id);
 		}
 		model.addAttribute("produto", produtoOptional.get());
-		return "/auth/estoquista/estoq-alterar-produto";
+		return "/administrativo/auth/estoquista/estoq-alterar-produto";
 	}
 
 	@PostMapping("/estoquista/atualizar-estoque/{id}")
@@ -193,7 +193,7 @@ public class ProdutoController {
 			RedirectAttributes attributes) {
 		if (result.hasErrors()) {
 			produto.setId(id);
-			return "/auth/estoquista/estoq-alterar-produto";
+			return "/administrativo/auth/estoquista/estoq-alterar-produto";
 		}
 		Optional<Produto> produtoAtual = produtoRepository.findById(id);
 		if (produtoAtual.isPresent()) {

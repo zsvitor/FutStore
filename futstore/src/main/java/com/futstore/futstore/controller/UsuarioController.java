@@ -35,7 +35,7 @@ public class UsuarioController {
 	public String adicionarUsuario(Model model) {
 		model.addAttribute("usuario", new Usuario());
 		model.addAttribute("papeis", Arrays.asList(PapelUsuario.values()));
-		return "/auth/administrador/admin-criar-usuario";
+		return "/administrativo/auth/administrador/admin-criar-usuario";
 	}
 
 	@PostMapping("/salvar")
@@ -46,7 +46,7 @@ public class UsuarioController {
 		}
 		if (result.hasErrors()) {
 			model.addAttribute("papeis", Arrays.asList(PapelUsuario.values()));
-			return "/auth/administrador/admin-criar-usuario";
+			return "/administrativo/auth/administrador/admin-criar-usuario";
 		}
 		usuario.setAtivo(true);
 		usuarioService.salvar(usuario);
@@ -63,7 +63,7 @@ public class UsuarioController {
 		}
 		model.addAttribute("usuarios", usuarios);
 		model.addAttribute("filtroNome", filtroNome);
-		return "/auth/administrador/admin-listar-usuario";
+		return "/administrativo/auth/administrador/admin-listar-usuario";
 	}
 
 	@GetMapping("/administrador/trocar-status/{id}")
@@ -85,11 +85,10 @@ public class UsuarioController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String emailLogado = auth.getName();
 		boolean isEditandoProprioUsuario = usuario.getGmail().equals(emailLogado);
-
 		model.addAttribute("usuario", usuario);
 		model.addAttribute("isEditandoProprioUsuario", isEditandoProprioUsuario);
 		model.addAttribute("papeis", Arrays.asList(PapelUsuario.values()));
-		return "/auth/administrador/admin-alterar-usuario";
+		return "/administrativo/auth/administrador/admin-alterar-usuario";
 	}
 
 	@PostMapping("/editar/{id}")
@@ -97,25 +96,20 @@ public class UsuarioController {
 			RedirectAttributes attributes) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String emailLogado = auth.getName();
-
 		Usuario usuarioOriginal = usuarioRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Usuário inválido:" + id));
-
 		boolean isEditandoProprioUsuario = usuarioOriginal.getGmail().equals(emailLogado);
-
 		if (isEditandoProprioUsuario && !usuario.getPapel().equals(usuarioOriginal.getPapel())) {
 			usuario.setPapel(usuarioOriginal.getPapel());
 			attributes.addFlashAttribute("mensagem",
 					"Você não pode alterar seu próprio papel. As outras informações foram atualizadas.");
 		}
-
 		if (result.hasErrors()) {
 			usuario.setId(id);
 			model.addAttribute("isEditandoProprioUsuario", isEditandoProprioUsuario);
 			model.addAttribute("papeis", Arrays.asList(PapelUsuario.values()));
-			return "/auth/administrador/admin-alterar-usuario";
+			return "/administrativo/auth/administrador/admin-alterar-usuario";
 		}
-
 		usuarioService.atualizar(usuario, id);
 		if (!attributes.getFlashAttributes().containsKey("mensagem")) {
 			attributes.addFlashAttribute("mensagem", "Usuário atualizado com sucesso!");

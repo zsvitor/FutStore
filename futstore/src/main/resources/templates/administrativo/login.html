@@ -37,7 +37,7 @@
                 <div th:if="${param.logout}" class="alert alert-success">
                     Você saiu do sistema.
                 </div>
-                <form th:action="@{/login}" method="post">
+                <form th:action="@{/administrativo/login}" method="post">
                     <div class="mb-3">
                         <label for="username" class="form-label">Gmail:</label>
                         <input id="username" name="username" class="form-control" type="email" required>
