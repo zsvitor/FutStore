@@ -1,10 +1,13 @@
 package com.futstore.futstore.controller;
 
+import com.futstore.futstore.modelo.Carrinho;
 import com.futstore.futstore.modelo.Produto;
 import com.futstore.futstore.modelo.ProdutoImagem;
 import com.futstore.futstore.repository.ProdutoRepository;
 import com.futstore.futstore.repository.ProdutoImagemRepository;
 import com.futstore.futstore.service.ProdutoService;
+
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -202,6 +205,21 @@ public class ProdutoController {
 			produtoRepository.save(produtoExistente);
 		}
 		return "redirect:/produto/estoquista/listar";
+	}
+	
+	@GetMapping("/detalhe/{id}")
+	public String detalhesProduto(@PathVariable("id") Long id, Model model, HttpSession session) {
+	    Optional<Produto> produtoOpt = produtoRepository.findById(id);
+	    if (!produtoOpt.isPresent()) {
+	        return "redirect:/";
+	    }
+	    Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
+	    if (carrinho == null) {
+	        carrinho = new Carrinho();
+	        session.setAttribute("carrinho", carrinho);
+	    }  
+	    model.addAttribute("produto", produtoOpt.get());
+	    return "/cliente/produto-detalhe";
 	}
 	
 }

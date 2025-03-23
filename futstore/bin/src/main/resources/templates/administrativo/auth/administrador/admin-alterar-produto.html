@@ -148,7 +148,8 @@
                                     <div class="col-sm-9">
                                         <div class="image-preview-container">
                                             <div class="image-preview" th:each="img : ${imagens}">
-                                                <img th:src="@{'/'+${img.caminho}}" alt="Imagem do produto">
+                                                <img th:src="@{/uploads/{filename}(filename=${img.caminho})}"
+                                                    alt="Imagem do produto">
                                                 <span class="principal-badge" th:if="${img.principal}">PRINCIPAL</span>
                                                 <div class="image-actions">
                                                     <a th:href="@{/produto/definir-imagem-principal/{produtoId}/{imagemId}(produtoId=${produto.id},imagemId=${img.id})}"

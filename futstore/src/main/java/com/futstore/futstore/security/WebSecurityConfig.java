@@ -42,12 +42,15 @@ public class WebSecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/", "/home", "/cliente/**", "/css/**", "/js/**", "/bootstrap-5.1.3-dist/**",
-						"/jquery-3.6.0-dist/**", "/fragments/**")
-				.permitAll().requestMatchers("/administrativo/login", "/usuario/novo", "/usuario/salvar", "/acesso-negado")
+						"/jquery-3.6.0-dist/**", "/fragments/**", "/uploads/**", "/produto/detalhe/**", "/carrinho/**",
+						"/carrinho", "/carrinho/adicionar", "/carrinho/atualizar", "/carrinho/remover/**")
+				.permitAll()
+				.requestMatchers("/administrativo/login", "/usuario/novo", "/usuario/salvar", "/acesso-negado")
 				.permitAll().requestMatchers("/auth/administrador/**").hasRole("ADMINISTRADOR")
 				.requestMatchers("/auth/estoquista/**").hasRole("ESTOQUISTA").requestMatchers("/estoque/**")
 				.hasAnyRole("ESTOQUISTA", "ADMINISTRADOR").anyRequest().authenticated())
-				.formLogin(form -> form.loginPage("/administrativo/login").defaultSuccessUrl("/administrativo/login-success", true)
+				.formLogin(form -> form.loginPage("/administrativo/login")
+						.defaultSuccessUrl("/administrativo/login-success", true)
 						.failureUrl("/administrativo/login?error=true").permitAll())
 				.logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 						.logoutSuccessUrl("/login?logout").permitAll())

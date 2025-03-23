@@ -5,6 +5,7 @@ import com.futstore.futstore.modelo.ProdutoImagem;
 import com.futstore.futstore.repository.ProdutoRepository;
 import com.futstore.futstore.repository.ProdutoImagemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,9 @@ import java.util.UUID;
 
 @Service
 public class ProdutoService {
+
+	@Value("${app.upload.dir:${user.home}/uploads}")
+	private String uploadDir;
 
 	@Autowired
 	private ProdutoRepository produtoRepository;
@@ -60,7 +64,7 @@ public class ProdutoService {
 					.orElseThrow(() -> new IllegalArgumentException("Produto inválido: " + produtoId));
 			String extensao = getExtensao(imagem.getOriginalFilename());
 			String nomeUnico = UUID.randomUUID().toString() + extensao;
-			String caminhoRelativo = "uploads/" + nomeUnico;
+			String caminhoRelativo = nomeUnico;
 			if (principal) {
 				for (ProdutoImagem img : produto.getImagens()) {
 					if (img.isPrincipal()) {
@@ -78,12 +82,11 @@ public class ProdutoService {
 				produtoRepository.save(produto);
 			}
 			try {
-				String caminhoAbsoluto = "futstore/src/main/resources/static/uploads";
-				File diretorio = new File(caminhoAbsoluto);
+				File diretorio = new File(uploadDir);
 				if (!diretorio.exists()) {
 					diretorio.mkdirs();
 				}
-				File arquivoDestino = new File(diretorio.getAbsolutePath() + File.separator + nomeUnico);
+				File arquivoDestino = new File(diretorio, nomeUnico);
 				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(arquivoDestino));
 				stream.write(imagem.getBytes());
 				stream.close();
@@ -122,9 +125,7 @@ public class ProdutoService {
 				.orElseThrow(() -> new IllegalArgumentException("Imagem inválida: " + imagemId));
 		boolean eraPrincipal = imagem.isPrincipal();
 		Produto produto = imagem.getProduto();
-		String caminhoArquivo = "futstore/src/main/resources/static/uploads/"
-				+ imagem.getCaminho();
-		File arquivo = new File(caminhoArquivo);
+		File arquivo = new File(uploadDir, imagem.getCaminho());
 		if (arquivo.exists()) {
 			arquivo.delete();
 		}

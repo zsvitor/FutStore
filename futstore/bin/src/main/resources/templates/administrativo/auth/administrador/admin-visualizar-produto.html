@@ -100,11 +100,13 @@
                         <div class="carousel-inner">
                             <div th:each="imagem : ${produto.imagens}" th:if="${imagem.principal}"
                                 class="carousel-item active">
-                                <img th:src="@{'/'+${imagem.caminho}}" class="d-block w-100" th:alt="${produto.nome}">
+                                <img th:src="@{/uploads/{filename}(filename=${imagem.caminho})}" class="d-block w-100"
+                                    th:alt="${produto.nome}">
                             </div>
                             <div th:each="imagem : ${produto.imagens}" th:unless="${imagem.principal}"
                                 class="carousel-item">
-                                <img th:src="@{'/'+${imagem.caminho}}" class="d-block w-100" th:alt="${produto.nome}">
+                                <img th:src="@{/uploads/{filename}(filename=${imagem.caminho})}" class="d-block w-100"
+                                    th:alt="${produto.nome}">
                             </div>
                             <div class="carousel-item active" th:if="${#lists.isEmpty(produto.imagens)}">
                                 <img th:src="@{/img/no-image-available.png}" class="d-block w-100" alt="Sem imagem">
@@ -126,12 +128,14 @@
 
                             <div th:each="imagem : ${produto.imagens}" th:if="${imagem.principal}"
                                 class="d-inline-block">
-                                <img th:src="@{'/'+${imagem.caminho}}" th:data-bs-target="'#productCarousel'"
-                                    th:data-bs-slide-to="0" class="active thumbnail-preview" th:alt="${produto.nome}">
+                                <img th:src="@{/uploads/{filename}(filename=${imagem.caminho})}"
+                                    th:data-bs-target="'#productCarousel'" th:data-bs-slide-to="0"
+                                    class="active thumbnail-preview" th:alt="${produto.nome}">
                             </div>
                             <div th:each="imagem, stat : ${produto.imagens}" th:unless="${imagem.principal}"
                                 class="d-inline-block">
-                                <img th:src="@{'/'+${imagem.caminho}}" th:data-bs-target="'#productCarousel'"
+                                <img th:src="@{/uploads/{filename}(filename=${imagem.caminho})}"
+                                    th:data-bs-target="'#productCarousel'"
                                     th:data-bs-slide-to="${#lists.size(produto.imagens.?[principal == true]) + stat.index - #lists.size(produto.imagens.?[principal == true])}"
                                     class="thumbnail-preview" th:alt="${produto.nome}">
                             </div>
