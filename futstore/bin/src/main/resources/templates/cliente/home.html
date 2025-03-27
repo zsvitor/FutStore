@@ -43,27 +43,28 @@
         <div class="container">
             <a class="navbar-brand" href="/">
                 <img src="" alt="FutStore Logo">
-            </a>           
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
-            </button>  
+            </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="#produtos">Produtos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sobre">Sobre</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contato">Contato</a></li>
-                </ul>               
+                </ul>
                 <div class="d-flex align-items-center">
                     <a href="/" class="btn btn-outline-primary me-3">
                         <i class="fas fa-user me-1"></i> Login/Cadastro
                     </a>
                     <a th:href="@{/carrinho}" class="btn btn-outline-success position-relative">
                         <i class="fas fa-shopping-cart"></i>
-						<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-						    th:text="${session.carrinho != null ? session.carrinho.quantidadeTotal : '0'}">
-						    0
-						</span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            th:text="${session.carrinho != null ? session.carrinho.quantidadeTotal : '0'}">
+                            0
+                        </span>
                     </a>
                 </div>
             </div>
@@ -85,8 +86,8 @@
                         <span class="input-group-text bg-white border-end-0">
                             <i class="fas fa-search text-muted"></i>
                         </span>
-                        <input type="text" class="form-control border-start-0" placeholder="Buscar produtos" 
-                               name="filtroNome" th:value="${filtroNome}">
+                        <input type="text" class="form-control border-start-0" placeholder="Buscar produtos"
+                            name="filtroNome" th:value="${filtroNome}">
                         <button class="btn btn-primary" type="submit">Buscar</button>
                     </div>
                 </form>
@@ -100,9 +101,8 @@
             </div>
             <div class="col-md-4 col-lg-3" th:each="produto : ${produtos}">
                 <div class="card h-100">
-					<img th:src="@{'/uploads/' + ${produto.imagem}}" 
-					     class="card-img-top" alt="Imagem do Produto"
-					     onerror="this.src='https://via.placeholder.com/300x300?text=Sem+Imagem'">                    
+                    <img th:src="@{'/uploads/' + ${produto.imagem}}" class="card-img-top" alt="Imagem do Produto"
+                        onerror="this.src='https://via.placeholder.com/300x300?text=Sem+Imagem'">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title" th:text="${produto.nome}">Nome do Produto</h5>
                         <h4 class="text-primary mb-3" th:text="${#numbers.formatCurrency(produto.preco)}">R$ 0,00</h4>
@@ -114,16 +114,19 @@
         <nav aria-label="Navegação de página" class="mt-4" th:if="${totalPaginas > 1}">
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${paginaAtual == 0} ? 'disabled'">
-                    <a class="page-link" th:href="@{/(page=${paginaAtual - 1}, filtroNome=${filtroNome})}" aria-label="Anterior">
+                    <a class="page-link" th:href="@{/(page=${paginaAtual - 1}, filtroNome=${filtroNome})}"
+                        aria-label="Anterior">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
-                <li class="page-item" th:each="pagina : ${#numbers.sequence(0, totalPaginas - 1)}" 
+                <li class="page-item" th:each="pagina : ${#numbers.sequence(0, totalPaginas - 1)}"
                     th:classappend="${pagina == paginaAtual} ? 'active'">
-                    <a class="page-link" th:href="@{/(page=${pagina}, filtroNome=${filtroNome})}" th:text="${pagina + 1}">1</a>
+                    <a class="page-link" th:href="@{/(page=${pagina}, filtroNome=${filtroNome})}"
+                        th:text="${pagina + 1}">1</a>
                 </li>
                 <li class="page-item" th:classappend="${paginaAtual == totalPaginas - 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{/(page=${paginaAtual + 1}, filtroNome=${filtroNome})}" aria-label="Próximo">
+                    <a class="page-link" th:href="@{/(page=${paginaAtual + 1}, filtroNome=${filtroNome})}"
+                        aria-label="Próximo">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>

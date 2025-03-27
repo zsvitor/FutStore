@@ -9,11 +9,11 @@
     <script th:src="@{/jquery-3.6.0-dist/jquery-3.6.0.min.js}"></script>
     <script th:src="@{/bootstrap-5.1.3-dist/js/bootstrap.min.js}"></script>
     <style>
-		.body {
-			display: flex;
-			flex-direction: column;
-			min-height: 100vh;
-		}
+        .body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
         .cart-item {
             border-bottom: 1px solid #eee;
             padding: 15px 0;
@@ -40,13 +40,13 @@
         .quantity-selector {
             width: 120px;
         }
-		.container.my-5 {
-		    min-height: 60vh;
-			flex: 1;
-		}
-		.footer {
-			margin-top: auto;
-		}
+        .container.my-5 {
+            min-height: 60vh;
+            flex: 1;
+        }
+        .footer {
+            margin-top: auto;
+        }
     </style>
 </head>
 <body>
@@ -96,7 +96,7 @@
             <h3>Seu carrinho está vazio</h3>
             <p class="text-muted">Adicione produtos para começar suas compras</p>
             <a href="/" class="btn btn-primary mt-3">Continuar Comprando</a>
-			<div class="py-5"></div>
+            <div class="py-5"></div>
         </div>
         <div th:if="${carrinho != null && !carrinho.isEmpty()}" class="row">
             <div class="col-lg-8">

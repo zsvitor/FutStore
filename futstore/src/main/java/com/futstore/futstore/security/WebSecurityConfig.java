@@ -42,7 +42,7 @@ public class WebSecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/", "/home", "/cliente/**", "/css/**", "/js/**", "/bootstrap-5.1.3-dist/**",
-						"/jquery-3.6.0-dist/**", "/fragments/**", "/uploads/**", "/produto/detalhe/**", "/carrinho/**",
+						"/jquery-3.6.0-dist/**", "/fragments/**", "/uploads/**", "/imagens/**", "/produto/detalhe/**", "/carrinho/**",
 						"/carrinho", "/carrinho/adicionar", "/carrinho/atualizar", "/carrinho/remover/**")
 				.permitAll()
 				.requestMatchers("/administrativo/login", "/usuario/novo", "/usuario/salvar", "/acesso-negado")
