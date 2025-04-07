@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FutStore</title>
+    <link rel="stylesheet" th:href="@{/bootstrap-5.1.3-dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script th:src="@{/jquery-3.6.0-dist/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/bootstrap-5.1.3-dist/js/bootstrap.min.js}"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container.my-5 {
+            flex: 1;
+        }
+        .form-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+        .navbar-brand img {
+            height: 50px;
+        }
+        .address-card {
+            transition: all 0.3s;
+        }
+        .address-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .address-default {
+            border: 2px solid #28a745;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/imagens/logo.png" alt="FutStore Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#produtos">Produtos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#sobre">Sobre</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#contato">Contato</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="d-flex me-2">
+                        <div th:if="${session.clienteLogado != null}" class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user me-1"></i>
+                                <span th:text="${session.clienteLogado.nomeCompleto}">Nome do Cliente</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item active" href="/cliente/perfil"><i
+                                            class="fas fa-id-card me-2"></i>Meu Perfil</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#" id="btnLogout"><i
+                                            class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <a th:href="@{/carrinho}" class="btn btn-outline-success position-relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            th:text="${session.carrinho != null ? session.carrinho.quantidadeTotal : '0'}">
+                            0
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-user me-2"></i>Menu</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="#dadosPessoais" class="list-group-item list-group-item-action active"
+                            data-bs-toggle="list">
+                            <i class="fas fa-id-card me-2"></i>Dados Pessoais
+                        </a>
+                        <a href="#alterarSenha" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-key me-2"></i>Alterar Senha
+                        </a>
+                        <a href="#enderecosEntrega" class="list-group-item list-group-item-action"
+                            data-bs-toggle="list">
+                            <i class="fas fa-map-marker-alt me-2"></i>Endereços de Entrega
+                        </a>
+                        <a href="#novoEndereco" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="fas fa-plus-circle me-2"></i>Adicionar Endereço
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i><span th:text="${mensagemSucesso}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+                <div th:if="${mensagemErro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i><span th:text="${mensagemErro}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="dadosPessoais">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-id-card me-2"></i>Dados Pessoais</h5>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/cliente/atualizar-dados}" th:object="${cliente}" method="post"
+                                    class="needs-validation" novalidate>
+                                    <div class="form-section">
+                                        <div class="mb-3">
+                                            <label for="nomeCompleto" class="form-label required-field">Nome
+                                                Completo</label>
+                                            <input type="text" class="form-control" id="nomeCompleto"
+                                                th:field="*{nomeCompleto}" required>
+                                            <div class="error-message" th:if="${#fields.hasErrors('nomeCompleto')}"
+                                                th:errors="*{nomeCompleto}"></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="cpf" class="form-label">CPF</label>
+                                                <input type="text" class="form-control" id="cpf" th:field="*{cpf}"
+                                                    placeholder="000.000.000-00" readonly>
+                                                <div class="form-text">O CPF não pode ser alterado</div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="dataNascimento" class="form-label required-field">Data de
+                                                    Nascimento</label>
+                                                <input type="date" class="form-control" id="dataNascimento"
+                                                    th:field="*{dataNascimento}" required>
+                                                <div class="error-message"
+                                                    th:if="${#fields.hasErrors('dataNascimento')}"
+                                                    th:errors="*{dataNascimento}"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="genero" class="form-label required-field">Gênero</label>
+                                            <select class="form-select" id="genero" th:field="*{genero}" required>
+                                                <option value="">Selecione...</option>
+                                                <option th:each="genero : ${generos}" th:value="${genero}"
+                                                    th:text="${genero.descricao}"></option>
+                                            </select>
+                                            <div class="error-message" th:if="${#fields.hasErrors('genero')}"
+                                                th:errors="*{genero}"></div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="gmail" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="gmail" th:field="*{gmail}"
+                                                readonly>
+                                            <div class="form-text">O email não pode ser alterado</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-1"></i> Salvar Alterações
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="alterarSenha">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-key me-2"></i>Alterar Senha</h5>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/cliente/atualizar-senha}" method="post" class="needs-validation"
+                                    novalidate>
+                                    <div class="form-section">
+                                        <div class="mb-3">
+                                            <label for="senhaAtual" class="form-label required-field">Senha
+                                                Atual</label>
+                                            <input type="password" class="form-control" id="senhaAtual"
+                                                name="senhaAtual" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="novaSenha" class="form-label required-field">Nova Senha</label>
+                                            <input type="password" class="form-control" id="novaSenha" name="novaSenha"
+                                                required>
+                                            <div class="form-text">A senha deve ter no mínimo 3 caracteres</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="confirmarNovaSenha" class="form-label required-field">Confirmar
+                                                Nova Senha</label>
+                                            <input type="password" class="form-control" id="confirmarNovaSenha"
+                                                name="confirmarNovaSenha" required>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-key me-1"></i> Alterar Senha
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="enderecosEntrega">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Endereços de Entrega</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div th:each="endereco : ${cliente.enderecosEntrega}" class="col-md-6 mb-3">
+                                        <div
+                                            th:class="${endereco.principal ? 'card address-card address-default' : 'card address-card'}">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0" th:text="${endereco.descricao}">Descrição do Endereço
+                                                </h6>
+                                                <div th:if="${endereco.principal}" class="badge bg-success">Padrão</div>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="mb-1">
+                                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                                    <span th:text="${endereco.logradouro + ', ' + endereco.numero}">Rua,
+                                                        Número</span>
+                                                </p>
+                                                <p class="mb-1" th:if="${endereco.complemento}">
+                                                    <span th:text="${endereco.complemento}">Complemento</span>
+                                                </p>
+                                                <p class="mb-1">
+                                                    <span
+                                                        th:text="${endereco.bairro + ' - ' + endereco.cidade + '/' + endereco.uf}">Bairro,
+                                                        Cidade/UF</span>
+                                                </p>
+                                                <p class="mb-0">
+                                                    <span th:text="${endereco.cep}">CEP</span>
+                                                </p>
+                                            </div>
+                                            <div class="card-footer bg-white">
+                                                <form th:action="@{/cliente/definir-endereco-padrao}" method="post"
+                                                    th:if="${!endereco.principal}">
+                                                    <input type="hidden" name="enderecoId" th:value="${endereco.id}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-primary w-100">
+                                                        <i class="fas fa-check-circle me-1"></i> Definir como Padrão
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div th:if="${cliente.enderecosEntrega.isEmpty()}" class="text-center py-5">
+                                    <i class="fas fa-home fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">Nenhum endereço cadastrado</h5>
+                                    <p>Adicione um novo endereço para suas entregas.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="novoEndereco">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Adicionar Novo Endereço</h5>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/cliente/adicionar-endereco}" th:object="${novoEndereco}"
+                                    method="post" class="needs-validation" novalidate>
+                                    <div class="form-section">
+                                        <div class="row mb-3">
+                                            <div class="col-md-8">
+                                                <label for="descricao" class="form-label required-field">Descrição do
+                                                    Endereço</label>
+                                                <input type="text" class="form-control" id="descricao"
+                                                    th:field="*{descricao}" placeholder="Ex: Casa, Trabalho" required>
+                                                <div class="error-message" th:if="${#fields.hasErrors('descricao')}"
+                                                    th:errors="*{descricao}"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label for="cep" class="form-label required-field">CEP</label>
+                                                <input type="text" class="form-control" id="cep" th:field="*{cep}"
+                                                    placeholder="00000-000" required>
+                                                <div class="error-message" th:if="${#fields.hasErrors('cep')}"
+                                                    th:errors="*{cep}"></div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-end">
+                                                <button type="button" class="btn btn-secondary mb-3"
+                                                    id="buscarCepNovo">Buscar</button>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8 mb-3">
+                                                <label for="logradouro"
+                                                    class="form-label required-field">Logradouro</label>
+                                                <input type="text" class="form-control" id="logradouro"
+                                                    th:field="*{logradouro}" required>
+                                                <div class="error-message" th:if="${#fields.hasErrors('logradouro')}"
+                                                    th:errors="*{logradouro}"></div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="numero" class="form-label required-field">Número</label>
+                                                <input type="text" class="form-control" id="numero" th:field="*{numero}"
+                                                    required>
+                                                <div class="error-message" th:if="${#fields.hasErrors('numero')}"
+                                                    th:errors="*{numero}"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="complemento" class="form-label">Complemento</label>
+                                            <input type="text" class="form-control" id="complemento"
+                                                th:field="*{complemento}">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="bairro" class="form-label required-field">Bairro</label>
+                                                <input type="text" class="form-control" id="bairro" th:field="*{bairro}"
+                                                    required>
+                                                <div class="error-message" th:if="${#fields.hasErrors('bairro')}"
+                                                    th:errors="*{bairro}"></div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="cidade" class="form-label required-field">Cidade</label>
+                                                <input type="text" class="form-control" id="cidade" th:field="*{cidade}"
+                                                    required>
+                                                <div class="error-message" th:if="${#fields.hasErrors('cidade')}"
+                                                    th:errors="*{cidade}"></div>
+                                            </div>
+                                            <div class="col-md-2 mb-3">
+                                                <label for="uf" class="form-label required-field">UF</label>
+                                                <input type="text" class="form-control" id="uf" th:field="*{uf}"
+                                                    maxlength="2" required>
+                                                <div class="error-message" th:if="${#fields.hasErrors('uf')}"
+                                                    th:errors="*{uf}"></div>
+                                            </div>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="definirComoPadrao"
+                                                name="definirComoPadrao">
+                                            <label class="form-check-label" for="definirComoPadrao">
+                                                Definir como endereço padrão
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-plus-circle me-1"></i> Adicionar Endereço
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4" id="sobre">
+                    <h5>FutStore</h5>
+                    <p>A melhor loja de produtos esportivos do Brasil.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Links Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-white">Home</a></li>
+                        <li><a href="/#produtos" class="text-white">Produtos</a></li>
+                        <li><a href="/#sobre" class="text-white">Sobre</a></li>
+                        <li><a href="/#contato" class="text-white">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4" id="contato">
+                    <h5>Contato</h5>
+                    <address>
+                        <i class="fas fa-map-marker-alt"></i> Av. Brasil, 1500<br>
+                        <i class="fas fa-phone"></i> (11) 1234-5678<br>
+                        <i class="fas fa-envelope"></i> contato@futstore.com
+                    </address>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <p>&copy; 2025 FutStore. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Confirmar Saída</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Você realmente deseja sair da sua conta?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a href="/cliente/logout" class="btn btn-primary">Confirmar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnLogout = document.getElementById('btnLogout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+                    logoutModal.show();
+                });
+            }
+            document.querySelector('#alterarSenha form').addEventListener('submit', function (e) {
+                const novaSenha = document.getElementById('novaSenha').value;
+                const confirmarNovaSenha = document.getElementById('confirmarNovaSenha').value;
+                if (novaSenha !== confirmarNovaSenha) {
+                    e.preventDefault();
+                    alert('As senhas não correspondem. Por favor, verifique.');
+                    return false;
+                }
+                return true;
+            });
+            $('#buscarCepNovo').on('click', function () {
+                const cep = $('#cep').val().replace(/\D/g, '');
+                if (cep.length !== 8) {
+                    alert('Por favor, informe um CEP válido com 8 dígitos.');
+                    return;
+                }
+                $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...');
+                $(this).prop('disabled', true);
+                $.getJSON(`https://viacep.com.br/ws/${cep}/json/`, function (data) {
+                    if (!data.erro) {
+                        $('#logradouro').val(data.logradouro);
+                        $('#bairro').val(data.bairro);
+                        $('#cidade').val(data.localidade);
+                        $('#uf').val(data.uf);
+                        $('#numero').focus();
+                    } else {
+                        alert('CEP não encontrado. Verifique o número informado.');
+                    }
+                }).fail(function () {
+                    alert('Erro ao buscar o CEP. Verifique sua conexão ou tente novamente mais tarde.');
+                }).always(function () {
+                    $('#buscarCepNovo').html('Buscar');
+                    $('#buscarCepNovo').prop('disabled', false);
+                });
+            });
+            $('#cep').on('input', function () {
+                let value = $(this).val().replace(/\D/g, '');
+                if (value.length > 5) {
+                    value = value.substring(0, 5) + '-' + value.substring(5, 8);
+                }
+                $(this).val(value);
+            });
+            const hash = window.location.hash;
+            if (hash) {
+                $('.list-group-item[href="' + hash + '"]').tab('show');
+            }
+            $('a[data-bs-toggle="list"]').on('click', function (e) {
+                window.location.hash = $(this).attr('href');
+            });
+        });
+    </script>
+</body>
+</html>
