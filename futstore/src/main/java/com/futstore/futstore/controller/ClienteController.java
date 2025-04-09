@@ -1,9 +1,11 @@
 package com.futstore.futstore.controller;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,14 +60,7 @@ public class ClienteController {
 		}
 		if (copiarEnderecoFaturamento) {
 			Endereco enderecoEntrega = new Endereco();
-			Endereco enderecoFaturamento = cliente.getEnderecoFaturamento();
-			enderecoEntrega.setCep(enderecoFaturamento.getCep());
-			enderecoEntrega.setLogradouro(enderecoFaturamento.getLogradouro());
-			enderecoEntrega.setNumero(enderecoFaturamento.getNumero());
-			enderecoEntrega.setComplemento(enderecoFaturamento.getComplemento());
-			enderecoEntrega.setBairro(enderecoFaturamento.getBairro());
-			enderecoEntrega.setCidade(enderecoFaturamento.getCidade());
-			enderecoEntrega.setUf(enderecoFaturamento.getUf());
+			clienteService.copiarEndereco(cliente.getEnderecoFaturamento(), enderecoEntrega);
 			enderecoEntrega.setDescricao("Principal");
 			enderecoEntrega.setPrincipal(true);
 			cliente.addEnderecoEntrega(enderecoEntrega);
@@ -128,20 +123,27 @@ public class ClienteController {
 	}
 
 	@PostMapping("/atualizar-dados")
-	public String atualizarDadosPessoais(@Valid @ModelAttribute("cliente") Cliente clienteForm, BindingResult result,
-			HttpSession session, Model model, RedirectAttributes redirectAttributes) {
-		if (result.hasErrors()) {
-			model.addAttribute("generos", Arrays.asList(Genero.values()));
-			model.addAttribute("novoEndereco", new Endereco());
-			return "cliente/perfil";
-		}
+	public String atualizarDadosPessoais(@RequestParam("nomeCompleto") String nomeCompleto,
+			@RequestParam("dataNascimento") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataNascimento,
+			@RequestParam("genero") Genero genero, HttpSession session, RedirectAttributes redirectAttributes) {
 		Cliente clienteLogado = (Cliente) session.getAttribute("clienteLogado");
-		clienteLogado.setNomeCompleto(clienteForm.getNomeCompleto());
-		clienteLogado.setDataNascimento(clienteForm.getDataNascimento());
-		clienteLogado.setGenero(clienteForm.getGenero());
-		clienteService.atualizar(clienteLogado);
-		session.setAttribute("clienteLogado", clienteLogado);
-		redirectAttributes.addFlashAttribute("mensagemSucesso", "Dados pessoais atualizados com sucesso!");
+		if (clienteLogado != null) {
+			Cliente cliente = clienteService.buscarPorId(clienteLogado.getId());
+			if (cliente != null) {
+				cliente.setNomeCompleto(nomeCompleto);
+				cliente.setDataNascimento(dataNascimento);
+				cliente.setGenero(genero);
+				clienteRepository.save(cliente);
+				clienteLogado.setNomeCompleto(nomeCompleto);
+				clienteLogado.setDataNascimento(dataNascimento);
+				clienteLogado.setGenero(genero);
+				redirectAttributes.addFlashAttribute("mensagemSucesso", "Dados pessoais atualizados com sucesso!");
+			} else {
+				redirectAttributes.addFlashAttribute("mensagemErro", "Cliente não encontrado.");
+			}
+		} else {
+			return "redirect:/cliente/login";
+		}
 		return "redirect:/cliente/perfil";
 	}
 

@@ -36,13 +36,16 @@
         .rating {
             color: #ffc107;
         }
+        .navbar-brand img {
+            height: 50px;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="" alt="FutStore Logo">
+                <img src="/imagens/logo.png" alt="FutStore Logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent">
@@ -56,9 +59,32 @@
                     <li class="nav-item"><a class="nav-link" href="#contato">Contato</a></li>
                 </ul>
                 <div class="d-flex align-items-center">
-                    <a href="/" class="btn btn-outline-primary me-3">
-                        <i class="fas fa-user me-1"></i> Login/Cadastro
-                    </a>
+                    <div class="d-flex me-2">
+                        <div th:if="${session.clienteLogado != null}" class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user me-1"></i>
+                                <span th:text="${session.clienteLogado.nomeCompleto}">Nome do Cliente</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="/cliente/perfil"><i
+                                            class="fas fa-id-card me-2"></i>Meu Perfil</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#" id="btnLogout"><i
+                                            class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                            </ul>
+                        </div>
+                        <div th:if="${session.clienteLogado == null}" class="d-flex">
+                            <a href="/cliente/login" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-sign-in-alt me-1"></i> Login
+                            </a>
+                            <a href="/cliente/cadastro" class="btn btn-outline-primary">
+                                <i class="fas fa-user-plus me-1"></i> Cadastrar
+                            </a>
+                        </div>
+                    </div>
                     <a th:href="@{/carrinho}" class="btn btn-outline-success position-relative">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
@@ -163,5 +189,34 @@
             </div>
         </div>
     </footer>
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Confirmar Saída</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Você realmente deseja sair da sua conta?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a href="/cliente/logout" class="btn btn-primary">Confirmar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnLogout = document.getElementById('btnLogout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+                    logoutModal.show();
+                });
+            }
+        });
+    </script>
 </body>
 </html>
