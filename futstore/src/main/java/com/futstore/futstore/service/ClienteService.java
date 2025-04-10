@@ -19,18 +19,22 @@ public class ClienteService {
 
 	@Transactional
 	public Cliente salvar(Cliente cliente) {
+		if (cliente.getEnderecoFaturamento() == null || cliente.getEnderecoFaturamento().getCep() == null
+				|| cliente.getEnderecoFaturamento().getCep().isEmpty()) {
+			throw new IllegalArgumentException("Endereço de faturamento é obrigatório");
+		}
 		cliente.setSenha(passwordEncoder.encode(cliente.getSenha()));
 		return clienteRepository.save(cliente);
 	}
 
 	public void copiarEndereco(Endereco origem, Endereco destino) {
-	    destino.setCep(origem.getCep());
-	    destino.setLogradouro(origem.getLogradouro());
-	    destino.setNumero(origem.getNumero());
-	    destino.setComplemento(origem.getComplemento());
-	    destino.setBairro(origem.getBairro());
-	    destino.setCidade(origem.getCidade());
-	    destino.setUf(origem.getUf());
+		destino.setCep(origem.getCep());
+		destino.setLogradouro(origem.getLogradouro());
+		destino.setNumero(origem.getNumero());
+		destino.setComplemento(origem.getComplemento());
+		destino.setBairro(origem.getBairro());
+		destino.setCidade(origem.getCidade());
+		destino.setUf(origem.getUf());
 	}
 
 	public boolean autenticar(String gmail, String senha) {
