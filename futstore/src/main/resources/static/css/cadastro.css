@@ -1,0 +1,14 @@
+.form-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.error-message {
+    color: red;
+    font-size: 0.9em;
+}
+.required-field::after {
+    content: " *";
+    color: red;
+}

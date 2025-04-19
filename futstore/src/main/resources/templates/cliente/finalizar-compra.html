@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FutStore</title>
+    <link rel="stylesheet" th:href="@{/bootstrap-5.1.3-dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<link rel="stylesheet" th:href="@{/css/finalizar-compra.css}">
+	<link rel="icon" type="image/png" href="/imagens/logo.png">
+    <script th:src="@{/jquery-3.6.0-dist/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/bootstrap-5.1.3-dist/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/imagens/logo.png" alt="FutStore Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#produtos">Produtos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#sobre">Sobre</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#contato">Contato</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="d-flex me-2">
+                        <div th:if="${session.clienteLogado != null}" class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user me-1"></i>
+                                <span th:text="${session.clienteLogado.nomeCompleto}">Nome do Cliente</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="/cliente/perfil"><i
+                                            class="fas fa-id-card me-2"></i>Meu Perfil</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#" id="btnLogout"><i
+                                            class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                            </ul>
+                        </div>
+                        <div th:if="${session.clienteLogado == null}" class="d-flex">
+                            <a href="/cliente/login" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-sign-in-alt me-1"></i> Login
+                            </a>
+                            <a href="/cliente/cadastro" class="btn btn-outline-primary">
+                                <i class="fas fa-user-plus me-1"></i> Cadastrar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container my-5">
+        <h1 class="mb-4">Finalizar Compra</h1>
+        <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${mensagem}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${erro}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div class="step-nav">
+            <div class="step active" id="step-shipping">
+                <i class="fas fa-map-marker-alt me-2"></i>Endereço de Entrega
+            </div>
+            <div class="step" id="step-payment">
+                <i class="fas fa-credit-card me-2"></i>Forma de Pagamento
+            </div>
+            <div class="step" id="step-review">
+                <i class="fas fa-clipboard-check me-2"></i>Resumo do Pedido
+            </div>
+        </div>
+        <form id="checkoutForm" th:action="@{/pedido/finalizar}" method="POST">
+            <div id="shipping-section" class="checkout-section">
+                <h3><i class="fas fa-map-marker-alt me-2"></i>Endereço de Entrega</h3>
+                <div class="mb-4">
+                    <div th:if="${!cliente.enderecosEntrega.isEmpty()}">
+                        <p>Selecione um endereço de entrega:</p>
+                        <div class="row">
+                            <div class="col-md-6 mb-3" th:each="endereco : ${cliente.enderecosEntrega}">
+                                <div class="address-card" th:classappend="${endereco.principal} ? 'selected' : ''">
+                                    <div class="form-check">
+                                        <input class="form-check-input endereco-radio" type="radio"
+                                            name="enderecoEntregaId" th:id="'endereco-' + ${endereco.id}"
+                                            th:value="${endereco.id}" th:checked="${endereco.principal}">
+                                        <label class="form-check-label" th:for="'endereco-' + ${endereco.id}">
+                                            <strong th:text="${endereco.descricao}">Endereço Principal</strong><br>
+                                            <span th:text="${endereco.logradouro + ', ' + endereco.numero}">Rua Exemplo,
+                                                123</span><br>
+                                            <span th:if="${endereco.complemento}" th:text="${endereco.complemento}">Apto
+                                                101</span>
+                                            <span th:if="${endereco.complemento}"><br></span>
+                                            <span
+                                                th:text="${endereco.bairro + ' - ' + endereco.cidade + '/' + endereco.uf}">Centro
+                                                - São Paulo/SP</span><br>
+                                            <span th:text="${'CEP: ' + endereco.cep}">CEP: 12345-678</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invalid-feedback endereco-feedback">
+                            Por favor, selecione um endereço de entrega.
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="collapse"
+                            data-bs-target="#novoEndereco">
+                            <i class="fas fa-plus me-2"></i>Adicionar Novo Endereço
+                        </button>
+                        <div class="collapse mt-3" id="novoEndereco">
+                            <div class="card card-body">
+                                <h5 class="mb-3">Novo Endereço de Entrega</h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="descricao" class="form-label">Descrição</label>
+                                        <input type="text" class="form-control" id="descricao"
+                                            name="novoEndereco.descricao" placeholder="Ex: Casa, Trabalho, etc">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="cep" class="form-label">CEP*</label>
+                                        <input type="text" class="form-control" id="cep" name="novoEndereco.cep"
+                                            placeholder="00000-000" required>
+                                        <div class="invalid-feedback">
+                                            Por favor, informe um CEP válido.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8 mb-3">
+                                        <label for="logradouro" class="form-label">Logradouro*</label>
+                                        <input type="text" class="form-control" id="logradouro"
+                                            name="novoEndereco.logradouro" required>
+                                        <div class="invalid-feedback">
+                                            Por favor, informe o logradouro.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="numero" class="form-label">Número*</label>
+                                        <input type="text" class="form-control" id="numero" name="novoEndereco.numero"
+                                            required>
+                                        <div class="invalid-feedback">
+                                            Por favor, informe o número.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="complemento" class="form-label">Complemento</label>
+                                        <input type="text" class="form-control" id="complemento"
+                                            name="novoEndereco.complemento">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="bairro" class="form-label">Bairro*</label>
+                                        <input type="text" class="form-control" id="bairro" name="novoEndereco.bairro"
+                                            required>
+                                        <div class="invalid-feedback">
+                                            Por favor, informe o bairro.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8 mb-3">
+                                        <label for="cidade" class="form-label">Cidade*</label>
+                                        <input type="text" class="form-control" id="cidade" name="novoEndereco.cidade"
+                                            required>
+                                        <div class="invalid-feedback">
+                                            Por favor, informe a cidade.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="uf" class="form-label">UF*</label>
+                                        <select class="form-select" id="uf" name="novoEndereco.uf" required>
+                                            <option value="">Selecione...</option>
+                                            <option value="AC">AC</option>
+                                            <option value="AL">AL</option>
+                                            <option value="AP">AP</option>
+                                            <option value="AM">AM</option>
+                                            <option value="BA">BA</option>
+                                            <option value="CE">CE</option>
+                                            <option value="DF">DF</option>
+                                            <option value="ES">ES</option>
+                                            <option value="GO">GO</option>
+                                            <option value="MA">MA</option>
+                                            <option value="MT">MT</option>
+                                            <option value="MS">MS</option>
+                                            <option value="MG">MG</option>
+                                            <option value="PA">PA</option>
+                                            <option value="PB">PB</option>
+                                            <option value="PR">PR</option>
+                                            <option value="PE">PE</option>
+                                            <option value="PI">PI</option>
+                                            <option value="RJ">RJ</option>
+                                            <option value="RN">RN</option>
+                                            <option value="RS">RS</option>
+                                            <option value="RO">RO</option>
+                                            <option value="RR">RR</option>
+                                            <option value="SC">SC</option>
+                                            <option value="SP">SP</option>
+                                            <option value="SE">SE</option>
+                                            <option value="TO">TO</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Por favor, selecione um estado.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="definirComoPadrao"
+                                        name="definirComoPadrao">
+                                    <label class="form-check-label" for="definirComoPadrao">
+                                        Definir como endereço padrão para futuras compras
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-4">
+                    <a href="/carrinho" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left me-1"></i> Voltar ao Carrinho
+                    </a>
+                    <button type="button" id="btn-to-payment" class="btn btn-primary">
+                        Próximo <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="payment-section" class="checkout-section" style="display: none;">
+                <h3><i class="fas fa-credit-card me-2"></i>Forma de Pagamento</h3>
+                <div class="mb-4">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="payment-method-card">
+                                <div class="form-check">
+                                    <input class="form-check-input payment-method-radio" type="radio"
+                                        name="formaPagamento" id="boleto" value="BOLETO">
+                                    <label class="form-check-label" for="boleto">
+                                        <i class="fas fa-barcode me-2"></i>
+                                        <strong>Boleto Bancário</strong><br>
+                                        <small class="text-muted">O pedido será confirmado após o pagamento do
+                                            boleto.</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="payment-method-card">
+                                <div class="form-check">
+                                    <input class="form-check-input payment-method-radio" type="radio"
+                                        name="formaPagamento" id="cartao" value="CARTAO">
+                                    <label class="form-check-label" for="cartao">
+                                        <i class="fas fa-credit-card me-2"></i>
+                                        <strong>Cartão de Crédito</strong><br>
+                                        <small class="text-muted">Pagamento seguro com cartão de crédito.</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback payment-method-feedback">
+                        Por favor, selecione uma forma de pagamento.
+                    </div>
+                    <div id="card-details" class="mt-4" style="display: none;">
+                        <div class="card card-body">
+                            <h5 class="mb-3">Dados do Cartão</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="cardNumber" class="form-label">Número do Cartão*</label>
+                                    <input type="text" class="form-control" id="cardNumber" name="cartao.numero"
+                                        placeholder="0000 0000 0000 0000">
+                                    <div class="invalid-feedback">
+                                        Por favor, informe um número de cartão válido.
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cardName" class="form-label">Nome no Cartão*</label>
+                                    <input type="text" class="form-control" id="cardName" name="cartao.nome"
+                                        placeholder="NOME COMO ESTÁ NO CARTÃO">
+                                    <div class="invalid-feedback">
+                                        Por favor, informe o nome como está no cartão.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="cardExpiry" class="form-label">Validade*</label>
+                                    <input type="text" class="form-control" id="cardExpiry" name="cartao.validade"
+                                        placeholder="MM/AA">
+                                    <div class="invalid-feedback">
+                                        Por favor, informe uma data válida.
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="cardCVV" class="form-label">CVV*</label>
+                                    <input type="text" class="form-control" id="cardCVV" name="cartao.cvv"
+                                        placeholder="123">
+                                    <div class="invalid-feedback">
+                                        Por favor, informe o código de segurança.
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="cardInstallments" class="form-label">Parcelas*</label>
+                                    <select class="form-select" id="cardInstallments" name="cartao.parcelas">
+                                        <option value="1">1x à vista</option>
+                                        <option value="2">2x sem juros</option>
+                                        <option value="3">3x sem juros</option>
+                                        <option value="4">4x sem juros</option>
+                                        <option value="5">5x sem juros</option>
+                                        <option value="6">6x sem juros</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" id="btn-back-to-shipping" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Voltar
+                    </button>
+                    <button type="button" id="btn-to-review" class="btn btn-primary">
+                        Próximo <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="review-section" class="checkout-section" style="display: none;">
+                <h3><i class="fas fa-clipboard-check me-2"></i>Resumo do Pedido</h3>
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Itens do Carrinho</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="cart-item" th:each="item : ${carrinho.itens}">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2">
+                                            <img th:if="${!item.produto.imagens.isEmpty()}"
+                                                th:src="@{/uploads/{filename}(filename=${item.produto.imagem})}"
+                                                class="product-image" th:alt="${item.produto.nome}">
+                                            <img th:if="${item.produto.imagens.isEmpty()}"
+                                                src="https://via.placeholder.com/80x80?text=Sem+Imagem"
+                                                class="product-image" alt="Sem imagem">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 th:text="${item.produto.nome}">Nome do Produto</h6>
+                                            <small class="text-muted"
+                                                th:text="${'Quantidade: ' + item.quantidade}">Quantidade: 2</small>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <span class="fw-bold"
+                                                th:text="${'R$ ' + #numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')}">
+                                                R$ 199,80
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Endereço de Entrega</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="selected-address-display">
+                                    <p>Selecione um endereço na etapa anterior.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Forma de Pagamento</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="selected-payment-display">
+                                    <p>Selecione uma forma de pagamento na etapa anterior.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Resumo de Valores</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal</span>
+                                    <span class="fw-bold"
+                                        th:text="${'R$ ' + #numbers.formatDecimal(carrinho.subtotal, 1, 'POINT', 2, 'COMMA')}">
+                                        R$ 199,80
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Frete</span>
+                                    <span class="fw-bold"
+                                        th:text="${'R$ ' + #numbers.formatDecimal(carrinho.valorFrete, 1, 'POINT', 2, 'COMMA')}">
+                                        R$ 10,00
+                                    </span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between mb-4">
+                                    <span class="h5">Total</span>
+                                    <span class="h5 text-success"
+                                        th:text="${'R$ ' + #numbers.formatDecimal(carrinho.total, 1, 'POINT', 2, 'COMMA')}">
+                                        R$ 209,80
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" id="btn-back-to-payment" class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-left me-1"></i> Voltar
+                                    </button>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-check-circle me-2"></i>Confirmar Pedido
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>FutStore</h5>
+                    <p>A melhor loja de produtos esportivos do Brasil.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Links Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-white">Home</a></li>
+                        <li><a href="/#produtos" class="text-white">Produtos</a></li>
+                        <li><a href="/#sobre" class="text-white">Sobre</a></li>
+                        <li><a href="/#contato" class="text-white">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contato</h5>
+                    <address>
+                        <i class="fas fa-map-marker-alt"></i> Av. Brasil, 1500<br>
+                        <i class="fas fa-phone"></i> (11) 1234-5678<br>
+                        <i class="fas fa-envelope"></i> contato@futstore.com
+                    </address>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <p>&copy; 2025 FutStore. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Confirmar Saída</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Você realmente deseja sair da sua conta?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a href="/cliente/logout" class="btn btn-primary">Confirmar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+	<script th:src="@{/js/finalizar-compra.js}"></script>
+</body>
+</html>

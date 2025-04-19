@@ -46,7 +46,7 @@ public class WebSecurityConfig {
 	public FilterRegistrationBean<ClienteLoginFilter> clienteLoginFilterRegistration() {
 		FilterRegistrationBean<ClienteLoginFilter> registration = new FilterRegistrationBean<>();
 		registration.setFilter(clienteLoginFilter);
-		registration.addUrlPatterns("/cliente/*", "/carrinho/*", "/produto/detalhe/*", "/home", "/");
+		registration.addUrlPatterns("/cliente/*", "/carrinho/*", "/checkout/*", "/produto/detalhe/*", "/home", "/");
 		registration.setName("clienteLoginFilter");
 		registration.setOrder(1);
 		return registration;
@@ -58,7 +58,7 @@ public class WebSecurityConfig {
 				.requestMatchers("/", "/home", "/cliente/**", "/css/**", "/js/**", "/bootstrap-5.1.3-dist/**",
 						"/jquery-3.6.0-dist/**", "/fragments/**", "/uploads/**", "/imagens/**", "/produto/detalhe/**",
 						"/carrinho/**", "/carrinho", "/carrinho/adicionar", "/carrinho/atualizar",
-						"/carrinho/remover/**")
+						"/carrinho/remover/**", "/checkout/**")
 				.permitAll()
 				.requestMatchers("/administrativo/login", "/usuario/novo", "/usuario/salvar", "/acesso-negado")
 				.permitAll().requestMatchers("/auth/administrador/**").hasRole("ADMINISTRADOR")
@@ -73,5 +73,5 @@ public class WebSecurityConfig {
 				.exceptionHandling(ex -> ex.accessDeniedPage("/acesso-negado")).csrf(csrf -> csrf.disable());
 		return http.build();
 	}
-	
+
 }

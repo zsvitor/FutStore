@@ -1,0 +1,30 @@
+.card-img-top {
+    height: 200px;
+    object-fit: contain;
+    padding: 15px;
+}
+.navbar-brand img {
+    height: 40px;
+}
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://via.placeholder.com/1200x400');
+    background-position: center;
+    background-size: cover;
+    color: white;
+    padding: 50px 0;
+    margin-bottom: 30px;
+}
+.card {
+    transition: transform 0.3s;
+    margin-bottom: 20px;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+.rating {
+    color: #ffc107;
+}
+.navbar-brand img {
+    height: 50px;
+}

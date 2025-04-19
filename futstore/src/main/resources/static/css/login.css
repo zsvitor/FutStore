@@ -1,0 +1,9 @@
+.login-form {
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: 8px;
+}
+.error-message {
+    color: red;
+    font-size: 0.9em;
+}
