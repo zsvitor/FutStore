@@ -55,17 +55,24 @@ document.addEventListener('DOMContentLoaded', function () {
             valid = true;
             document.querySelector('.endereco-feedback').style.display = 'none';
         } else if (novoEndereco.classList.contains('show')) {
-            const requiredFields = novoEndereco.querySelectorAll('input[required], select[required]');
-            let newAddressValid = true;
-            requiredFields.forEach(field => {
-                if (!field.value) {
-                    field.classList.add('is-invalid');
-                    newAddressValid = false;
-                } else {
-                    field.classList.remove('is-invalid');
-                }
-            });
-            valid = newAddressValid;
+            const cepInput = document.getElementById('cep');
+            if (cepInput && cepInput.value.trim()) {
+                const requiredFields = ['logradouro', 'numero', 'bairro', 'cidade', 'uf'];
+                let newAddressValid = true;
+
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        newAddressValid = false;
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+                valid = newAddressValid;
+            } else {
+                document.querySelector('.endereco-feedback').style.display = 'block';
+            }
         } else {
             document.querySelector('.endereco-feedback').style.display = 'block';
         }
@@ -250,46 +257,101 @@ document.addEventListener('DOMContentLoaded', function () {
         checkoutForm.addEventListener('submit', function (e) {
             e.preventDefault();
             if (reviewSection.style.display === 'block') {
+                let enderecoValid = false;
                 const enderecoSelecionado = document.querySelector('input[name="enderecoEntregaId"]:checked');
                 const novoEndereco = document.getElementById('novoEndereco');
-                let enderecoValid = false;
                 if (enderecoSelecionado) {
                     enderecoValid = true;
                 } else if (novoEndereco.classList.contains('show')) {
-                    const requiredFields = novoEndereco.querySelectorAll('input[required], select[required]');
-                    enderecoValid = true;
-                    requiredFields.forEach(field => {
-                        if (!field.value) {
-                            enderecoValid = false;
-                        }
-                    });
+                    const cepInput = document.getElementById('cep');
+                    if (cepInput && cepInput.value.trim()) {
+                        const requiredFields = ['logradouro', 'numero', 'bairro', 'cidade', 'uf'];
+                        enderecoValid = true;
+
+                        requiredFields.forEach(fieldId => {
+                            const field = document.getElementById(fieldId);
+                            if (!field.value.trim()) {
+                                enderecoValid = false;
+                            }
+                        });
+                    }
                 }
                 const formaPagamentoSelecionada = document.querySelector('input[name="formaPagamento"]:checked');
                 let pagamentoValid = false;
                 if (formaPagamentoSelecionada) {
                     pagamentoValid = true;
                     if (formaPagamentoSelecionada.value === 'CARTAO') {
-                        const cardNumber = document.getElementById('cardNumber').value;
-                        const cardName = document.getElementById('cardName').value;
+                        const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+                        const cardName = document.getElementById('cardName').value.trim();
                         const cardExpiry = document.getElementById('cardExpiry').value;
                         const cardCVV = document.getElementById('cardCVV').value;
-                        if (!cardNumber || !cardName || !cardExpiry || !cardCVV) {
+                        if (cardNumber.length !== 16 || !/^\d{16}$/.test(cardNumber)) {
+                            document.getElementById('cardNumber').classList.add('is-invalid');
                             pagamentoValid = false;
+                        } else {
+                            document.getElementById('cardNumber').classList.remove('is-invalid');
+                        }
+                        if (cardName.length < 3) {
+                            document.getElementById('cardName').classList.add('is-invalid');
+                            pagamentoValid = false;
+                        } else {
+                            document.getElementById('cardName').classList.remove('is-invalid');
+                        }
+                        if (!cardExpiry.match(/^(0[1-9]|1[0-2])\/[0-9]{2}$/)) {
+                            document.getElementById('cardExpiry').classList.add('is-invalid');
+                            pagamentoValid = false;
+                        } else {
+                            document.getElementById('cardExpiry').classList.remove('is-invalid');
+                        }
+                        if (!cardCVV.match(/^\d{3,4}$/)) {
+                            document.getElementById('cardCVV').classList.add('is-invalid');
+                            pagamentoValid = false;
+                        } else {
+                            document.getElementById('cardCVV').classList.remove('is-invalid');
                         }
                     }
                 }
                 if (enderecoValid && pagamentoValid) {
+                    const loadingOverlay = document.createElement('div');
+                    loadingOverlay.className = 'loading-overlay';
+                    loadingOverlay.innerHTML = `
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Processando...</span>
+                        </div>
+                        <p class="mt-2">Processando seu pedido...</p>
+                    `;
+                    document.body.appendChild(loadingOverlay);
                     this.submit();
                 } else {
-                    alert('Por favor, verifique se todos os campos estão preenchidos corretamente.');
+                    let errorMessage = 'Por favor, verifique se todos os campos estão preenchidos corretamente.';
+
                     if (!enderecoValid) {
+                        errorMessage = 'Por favor, selecione ou cadastre um endereço de entrega válido.';
                         btnBackToShipping.click();
                     } else if (!pagamentoValid) {
+                        errorMessage = 'Por favor, selecione uma forma de pagamento e preencha todos os dados necessários.';
                         btnBackToPayment.click();
                     }
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+                    alertDiv.setAttribute('role', 'alert');
+                    alertDiv.innerHTML = `
+                        ${errorMessage}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    const container = document.querySelector('.container');
+                    container.insertBefore(alertDiv, container.firstChild.nextSibling);
                 }
             } else {
-                alert('Por favor, complete todas as etapas antes de confirmar o pedido.');
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+                alertDiv.setAttribute('role', 'alert');
+                alertDiv.innerHTML = `
+                    Por favor, complete todas as etapas antes de confirmar o pedido.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                const container = document.querySelector('.container');
+                container.insertBefore(alertDiv, container.firstChild.nextSibling);
             }
         });
     }

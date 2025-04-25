@@ -1,0 +1,113 @@
+.order-status {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    display: inline-block;
+}
+.status-aguardando-pagamento {
+    background-color: #fff3cd;
+    color: #856404;
+}
+.status-pago {
+    background-color: #d4edda;
+    color: #155724;
+}
+.status-enviado {
+    background-color: #cce5ff;
+    color: #004085;
+}
+.status-entregue {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+.status-cancelado {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+.timeline-item {
+    position: relative;
+    padding-bottom: 25px;
+}
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -30px;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #dee2e6;
+    border: 3px solid #fff;
+    z-index: 1;
+}
+.timeline-item.active::before {
+    background-color: #0d6efd;
+}
+.timeline-item.completed::before {
+    background-color: #198754;
+}
+.timeline::before {
+    content: "";
+    position: absolute;
+    left: -20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #dee2e6;
+}
+.tracking-info {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+}
+.product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.card-img-top {
+    height: 200px;
+    object-fit: contain;
+    padding: 15px;
+}
+.navbar-brand img {
+    height: 50px;
+}
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://via.placeholder.com/1200x400');
+    background-position: center;
+    background-size: cover;
+    color: white;
+    padding: 50px 0;
+    margin-bottom: 30px;
+}
+.card {
+    transition: transform 0.3s;
+    margin-bottom: 20px;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+.rating {
+    color: #ffc107;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.container.my-5 {
+    flex: 1;
+}
+footer {
+    margin-top: auto;
+}

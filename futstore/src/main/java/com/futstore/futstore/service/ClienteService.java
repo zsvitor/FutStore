@@ -67,7 +67,7 @@ public class ClienteService {
 	}
 
 	@Transactional
-	public void adicionarEnderecoEntrega(Cliente cliente, Endereco novoEndereco) {
+	public Endereco adicionarEnderecoEntrega(Cliente cliente, Endereco novoEndereco) {
 		if (novoEndereco.isPrincipal()) {
 			for (Endereco endereco : cliente.getEnderecosEntrega()) {
 				endereco.setPrincipal(false);
@@ -77,6 +77,7 @@ public class ClienteService {
 		}
 		cliente.addEnderecoEntrega(novoEndereco);
 		clienteRepository.save(cliente);
+		return novoEndereco;
 	}
 
 	@Transactional
