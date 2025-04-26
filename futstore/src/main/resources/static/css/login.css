@@ -1,8 +1,32 @@
+html,
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.container.mb-5 {
+    flex-grow: 1;
+}
+
+footer {
+    margin-top: auto;
+    width: 100%;
+}
+
 .login-form {
     background-color: #f8f9fa;
     padding: 30px;
     border-radius: 8px;
 }
+
 .error-message {
     color: red;
     font-size: 0.9em;

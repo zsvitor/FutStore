@@ -3,9 +3,11 @@
     object-fit: contain;
     padding: 15px;
 }
+
 .navbar-brand img {
     height: 50px;
 }
+
 .hero-section {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://via.placeholder.com/1200x400');
     background-position: center;
@@ -14,44 +16,55 @@
     padding: 50px 0;
     margin-bottom: 30px;
 }
+
 .card {
     transition: transform 0.3s;
     margin-bottom: 20px;
 }
+
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
+
 .rating {
     color: #ffc107;
 }
+
 html,
 body {
     height: 100%;
     margin: 0;
 }
+
 body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
+
 .container.my-5 {
     flex: 1 0 auto;
 }
+
 footer {
     flex-shrink: 0;
     width: 100%;
 }
+
 .table-responsive {
     margin-top: 20px;
 }
+
 .badge {
     font-size: 85%;
     padding: 0.5em 0.8em;
 }
+
 .text-center.py-5 {
     padding: 3rem 0;
 }
+
 .text-center.py-5 .fas {
     color: #adb5bd;
     margin-bottom: 1rem;

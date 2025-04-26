@@ -3,32 +3,40 @@ body {
     display: flex;
     flex-direction: column;
 }
+
 .container.my-5 {
     flex: 1;
 }
+
 .form-section {
     background-color: #f8f9fa;
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
 }
+
 .error-message {
     color: red;
     font-size: 0.9em;
 }
+
 .required-field::after {
     content: " *";
     color: red;
 }
+
 .navbar-brand img {
     height: 50px;
 }
+
 .address-card {
     transition: all 0.3s;
 }
+
 .address-card:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
+
 .address-default {
     border: 2px solid #28a745;
 }
