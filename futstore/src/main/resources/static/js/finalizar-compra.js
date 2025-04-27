@@ -50,32 +50,14 @@ document.addEventListener('DOMContentLoaded', function () {
     btnToPayment.addEventListener('click', function () {
         let valid = false;
         const enderecoSelecionado = document.querySelector('input[name="enderecoEntregaId"]:checked');
-        const novoEndereco = document.getElementById('novoEndereco');
+
         if (enderecoSelecionado) {
             valid = true;
             document.querySelector('.endereco-feedback').style.display = 'none';
-        } else if (novoEndereco.classList.contains('show')) {
-            const cepInput = document.getElementById('cep');
-            if (cepInput && cepInput.value.trim()) {
-                const requiredFields = ['logradouro', 'numero', 'bairro', 'cidade', 'uf'];
-                let newAddressValid = true;
-
-                requiredFields.forEach(fieldId => {
-                    const field = document.getElementById(fieldId);
-                    if (!field.value.trim()) {
-                        field.classList.add('is-invalid');
-                        newAddressValid = false;
-                    } else {
-                        field.classList.remove('is-invalid');
-                    }
-                });
-                valid = newAddressValid;
-            } else {
-                document.querySelector('.endereco-feedback').style.display = 'block';
-            }
         } else {
             document.querySelector('.endereco-feedback').style.display = 'block';
         }
+
         if (valid) {
             shippingSection.style.display = 'none';
             paymentSection.style.display = 'block';
@@ -144,26 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedAddressDisplay.innerHTML = '';
             selectedAddressDisplay.appendChild(addressCard);
         } else {
-            const novoEndereco = document.getElementById('novoEndereco');
-            if (novoEndereco.classList.contains('show')) {
-                const descricao = document.getElementById('descricao').value || 'Novo endereço';
-                const logradouro = document.getElementById('logradouro').value;
-                const numero = document.getElementById('numero').value;
-                const complemento = document.getElementById('complemento').value;
-                const bairro = document.getElementById('bairro').value;
-                const cidade = document.getElementById('cidade').value;
-                const uf = document.getElementById('uf').value;
-                const cep = document.getElementById('cep').value;
-                selectedAddressDisplay.innerHTML = `
-            <div class="address-card selected">
-                <strong>${descricao}</strong><br>
-                <span>${logradouro}, ${numero}</span><br>
-                ${complemento ? `<span>${complemento}</span><br>` : ''}
-                <span>${bairro} - ${cidade}/${uf}</span><br>
-                <span>CEP: ${cep}</span>
-            </div>
-        `;
-            }
+            selectedAddressDisplay.innerHTML = '<p>Nenhum endereço selecionado.</p>';
         }
     }
     function updatePaymentReview() {
@@ -227,31 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.target.value = value;
         });
     }
-    if (document.getElementById('cep')) {
-        document.getElementById('cep').addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 8) value = value.substring(0, 8);
-            if (value.length > 5) {
-                e.target.value = value.substring(0, 5) + '-' + value.substring(5);
-            } else {
-                e.target.value = value;
-            }
-            if (value.length === 8) {
-                fetch(`https://viacep.com.br/ws/${value}/json/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.erro) {
-                            document.getElementById('logradouro').value = data.logradouro;
-                            document.getElementById('bairro').value = data.bairro;
-                            document.getElementById('cidade').value = data.localidade;
-                            document.getElementById('uf').value = data.uf;
-                            document.getElementById('numero').focus();
-                        }
-                    })
-                    .catch(error => console.log('Erro ao consultar CEP:', error));
-            }
-        });
-    }
+
     const checkoutForm = document.getElementById('checkoutForm');
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', function (e) {
@@ -259,23 +198,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (reviewSection.style.display === 'block') {
                 let enderecoValid = false;
                 const enderecoSelecionado = document.querySelector('input[name="enderecoEntregaId"]:checked');
-                const novoEndereco = document.getElementById('novoEndereco');
+
                 if (enderecoSelecionado) {
                     enderecoValid = true;
-                } else if (novoEndereco.classList.contains('show')) {
-                    const cepInput = document.getElementById('cep');
-                    if (cepInput && cepInput.value.trim()) {
-                        const requiredFields = ['logradouro', 'numero', 'bairro', 'cidade', 'uf'];
-                        enderecoValid = true;
-
-                        requiredFields.forEach(fieldId => {
-                            const field = document.getElementById(fieldId);
-                            if (!field.value.trim()) {
-                                enderecoValid = false;
-                            }
-                        });
-                    }
                 }
+
                 const formaPagamentoSelecionada = document.querySelector('input[name="formaPagamento"]:checked');
                 let pagamentoValid = false;
                 if (formaPagamentoSelecionada) {
@@ -326,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     let errorMessage = 'Por favor, verifique se todos os campos estão preenchidos corretamente.';
 
                     if (!enderecoValid) {
-                        errorMessage = 'Por favor, selecione ou cadastre um endereço de entrega válido.';
+                        errorMessage = 'Por favor, selecione um endereço de entrega válido.';
                         btnBackToShipping.click();
                     } else if (!pagamentoValid) {
                         errorMessage = 'Por favor, selecione uma forma de pagamento e preencha todos os dados necessários.';

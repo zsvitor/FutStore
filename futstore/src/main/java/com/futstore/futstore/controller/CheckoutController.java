@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -55,9 +54,6 @@ public class CheckoutController {
 		if (!model.containsAttribute("pagamento")) {
 			model.addAttribute("pagamento", new Pagamento());
 		}
-		if (!model.containsAttribute("novoEndereco")) {
-			model.addAttribute("novoEndereco", new Endereco());
-		}
 		model.addAttribute("formasPagamento", FormaPagamento.values());
 		model.addAttribute("parcelasDisponiveis", List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12));
 		return "cliente/finalizar-compra";
@@ -75,24 +71,6 @@ public class CheckoutController {
 		return "redirect:/checkout/finalizar";
 	}
 
-	@PostMapping("/adicionar-endereco")
-	public String adicionarEndereco(@Valid @ModelAttribute("novoEndereco") Endereco novoEndereco, BindingResult result,
-			HttpSession session, RedirectAttributes attributes) {
-		Cliente clienteLogado = (Cliente) session.getAttribute("clienteLogado");
-		if (clienteLogado == null) {
-			return "redirect:/cliente/login";
-		}
-		if (result.hasErrors()) {
-			attributes.addFlashAttribute("org.springframework.validation.BindingResult.novoEndereco", result);
-			attributes.addFlashAttribute("novoEndereco", novoEndereco);
-			attributes.addFlashAttribute("erro", "Verifique os campos do endereço");
-			return "redirect:/checkout/finalizar";
-		}
-		clienteService.adicionarEnderecoEntrega(clienteLogado, novoEndereco);
-		attributes.addFlashAttribute("mensagem", "Novo endereço adicionado com sucesso");
-		return "redirect:/checkout/finalizar";
-	}
-
 	@PostMapping("/processar-pagamento")
 	public String processarPagamento(@Valid @ModelAttribute("pagamento") Pagamento pagamento, BindingResult result,
 			@RequestParam(value = "enderecoEntregaId", required = false) Long enderecoEntregaId, HttpSession session,
@@ -107,9 +85,9 @@ public class CheckoutController {
 			return "redirect:/carrinho";
 		}
 		if (carrinho.getValorFrete() == null || carrinho.getValorFrete().compareTo(BigDecimal.ZERO) <= 0) {
-	        attributes.addFlashAttribute("erro", "Por favor, selecione uma opção de frete antes de continuar");
-	        return "redirect:/carrinho";
-	    }
+			attributes.addFlashAttribute("erro", "Por favor, selecione uma opção de frete antes de continuar");
+			return "redirect:/carrinho";
+		}
 		if (enderecoEntregaId == null) {
 			attributes.addFlashAttribute("erro", "Selecione um endereço de entrega");
 			return "redirect:/checkout/finalizar";
@@ -181,5 +159,5 @@ public class CheckoutController {
 			return "redirect:/checkout/finalizar";
 		}
 	}
-
+	
 }
