@@ -5,6 +5,8 @@ import com.futstore.futstore.repository.PagamentoRepository;
 import com.futstore.futstore.repository.PedidoRepository;
 import com.futstore.futstore.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
@@ -72,6 +74,31 @@ public class PedidoService {
 				.orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 		produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - quantidade);
 		produtoRepository.save(produto);
+	}
+
+	@Transactional
+	public void atualizarStatus(Long pedidoId, StatusPedido novoStatus) {
+		Pedido pedido = pedidoRepository.findById(pedidoId)
+				.orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+		if (novoStatus == StatusPedido.ENTREGUE && (pedido.getStatus() != StatusPedido.EM_TRANSITO
+				&& pedido.getStatus() != StatusPedido.AGUARDANDO_RETIRADA)) {
+			throw new RuntimeException(
+					"Para marcar como entregue, o pedido deve estar em trânsito ou aguardando retirada");
+		}
+		pedido.setStatus(novoStatus);
+		pedidoRepository.save(pedido);
+	}
+
+	public Page<Pedido> buscarPedidosComFiltros(String status, String cliente, Pageable pageable) {
+		StatusPedido statusEnum = null;
+		if (status != null && !status.isEmpty()) {
+			try {
+				statusEnum = StatusPedido.valueOf(status);
+			} catch (IllegalArgumentException e) {
+				statusEnum = null;
+			}
+		}
+		return pedidoRepository.findByStatusAndClienteNome(statusEnum, cliente, pageable);
 	}
 
 }

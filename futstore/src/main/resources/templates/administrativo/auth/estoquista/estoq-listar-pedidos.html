@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BackOffice</title>
+    <link rel="stylesheet" th:href="@{/bootstrap-5.1.3-dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="/imagens/logo.png">
+    <script th:src="@{/jquery-3.6.0-dist/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/bootstrap-5.1.3-dist/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <div th:replace="fragments/publica-nav :: nav"></div>
+    <div class="main-content" style="margin-top: 50px;">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Lista de Pedidos</h1>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form th:action="@{/pedido/estoquista/listar}" method="get">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="">Todos</option>
+                                    <option th:each="status : ${statusList}" th:value="${status}"
+                                        th:text="${#strings.replace(status.name(), '_', ' ')}"
+                                        th:selected="${status == statusFiltro}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cliente" class="form-label">Cliente</label>
+                                <input type="text" class="form-control" id="cliente" name="cliente"
+                                    placeholder="Nome ou email do cliente" th:value="${clienteFiltro}">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <div class="w-100">
+                                    <button type="submit" class="btn btn-primary me-2">
+                                        <i class="fas fa-search me-1"></i>Filtrar
+                                    </button>
+                                    <a th:href="@{/pedido/estoquista/listar}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times me-1"></i>Limpar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${mensagem}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span th:text="${erro}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <table class="table mb-0 text-center">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag me-2"></i>Número</th>
+                                <th><i class="fas fa-calendar me-2"></i>Data</th>
+                                <th><i class="fas fa-user me-2"></i>Cliente</th>
+                                <th><i class="fas fa-dollar-sign me-2"></i>Valor Total</th>
+                                <th><i class="fas fa-tag me-2"></i>Status</th>
+                                <th><i class="fas fa-cogs me-2"></i>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${pedidos.empty}">
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="fas fa-box-open fa-3x text-muted mb-3 d-block"></i>
+                                    <p class="text-muted">Nenhum pedido encontrado</p>
+                                </td>
+                            </tr>
+                            <tr th:each="pedido : ${pedidos}">
+                                <td th:text="${pedido.id}">#123</td>
+                                <td th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy HH:mm')}">01/01/2025
+                                    14:30</td>
+                                <td th:text="${pedido.cliente.nomeCompleto}">Cliente</td>
+                                <td
+                                    th:text="${'R$ ' + #numbers.formatDecimal(pedido.valorTotal, 1, 'POINT', 2, 'COMMA')}">
+                                    R$ 99,90</td>
+                                <td>
+                                    <span class="badge bg-secondary px-3 py-2"
+                                        th:text="${#strings.replace(pedido.status.name(), '_', ' ')}">
+                                        Status do Pedido
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a class="btn btn-outline-warning btn-sm"
+                                            th:href="@{/pedido/estoquista/editar-status/{id}(id=${pedido.id})}"
+                                            title="Editar Status">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <nav aria-label="Navegação de página" class="mt-3" th:if="${totalPaginas > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${paginaAtual == 0} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/pedido/estoquista/listar(page=0, status=${statusFiltro}, cliente=${clienteFiltro})}"
+                            aria-label="Primeira">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${paginaAtual == 0} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/pedido/estoquista/listar(page=${paginaAtual - 1}, status=${statusFiltro}, cliente=${clienteFiltro})}"
+                            aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="pagina : ${#numbers.sequence(
+                            (paginaAtual - 2 > 0) ? paginaAtual - 2 : 0, 
+                            (paginaAtual + 2 < totalPaginas - 1) ? paginaAtual + 2 : totalPaginas - 1
+                        )}" th:classappend="${pagina == paginaAtual} ? 'active'">
+                        <a class="page-link"
+                            th:href="@{/pedido/estoquista/listar(page=${pagina}, status=${statusFiltro}, cliente=${clienteFiltro})}"
+                            th:text="${pagina + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${paginaAtual == totalPaginas - 1} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/pedido/estoquista/listar(page=${paginaAtual + 1}, status=${statusFiltro}, cliente=${clienteFiltro})}"
+                            aria-label="Próximo">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${paginaAtual == totalPaginas - 1} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/pedido/estoquista/listar(page=${totalPaginas - 1}, status=${statusFiltro}, cliente=${clienteFiltro})}"
+                            aria-label="Última">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="text-center mt-2">
+                    <small class="text-muted">
+                        Página <strong th:text="${paginaAtual + 1}"></strong> de
+                        <strong th:text="${totalPaginas}"></strong>
+                    </small>
+                </div>
+            </nav>
+        </div>
+    </div>
+</body>
+</html>

@@ -6,7 +6,8 @@
 <body>
     <nav th:fragment="nav" class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" th:href="${#authorization.expression('hasRole(''ADMINISTRADOR'')') ? '/administrativo/auth/administrador/admin-index' : 
+            <a class="navbar-brand"
+                th:href="${#authorization.expression('hasRole(''ADMINISTRADOR'')') ? '/administrativo/auth/administrador/admin-index' : 
 			             #authorization.expression('hasRole(''ESTOQUISTA'')') ? '/administrativo/auth/estoquista/estoq-index' : '/'}">
                 FutStore | Sistema Administrativo
             </a>
@@ -22,9 +23,12 @@
                     <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR')">
                         <a class="nav-link" th:href="@{/produto/administrador/listar}">Produtos</a>
                     </li>
-					<li class="nav-item" sec:authorize="hasAnyRole('ESTOQUISTA')">
-					    <a class="nav-link" th:href="@{/produto/estoquista/listar}">Produtos</a>
-					</li>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ESTOQUISTA')">
+                        <a class="nav-link" th:href="@{/produto/estoquista/listar}">Produtos</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ESTOQUISTA')">
+                        <a class="nav-link" th:href="@{/pedido/estoquista/listar}">Pedidos</a>
+                    </li>
                 </ul>
                 <div class="navbar-nav d-flex align-items-center">
                     <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">

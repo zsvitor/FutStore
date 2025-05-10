@@ -1,8 +1,8 @@
 package com.futstore.futstore.modelo;
 
 public enum StatusPedido {
-	AGUARDANDO_PAGAMENTO("Aguardando Pagamento"), PAGAMENTO_APROVADO("Pagamento Aprovado"),
-	EM_SEPARACAO("Em Separação"), ENVIADO("Enviado"), ENTREGUE("Entregue"), CANCELADO("Cancelado");
+	AGUARDANDO_PAGAMENTO("Aguardando Pagamento"), PAGAMENTO_REJEITADO("Pagamento Rejeitado"), PAGO("Pago"),
+	AGUARDANDO_RETIRADA("Aguardando Retirada"), EM_TRANSITO("Em Trânsito"), ENTREGUE("Entregue");
 
 	private final String descricao;
 

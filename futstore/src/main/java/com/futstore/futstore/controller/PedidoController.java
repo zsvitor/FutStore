@@ -6,6 +6,9 @@ import com.futstore.futstore.service.ClienteService;
 import com.futstore.futstore.service.PedidoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -42,13 +45,11 @@ public class PedidoController {
 		if (clienteLogado == null) {
 			return "redirect:/cliente/login";
 		}
-
 		Pedido pedido = pedidoRepository.findByIdWithItems(id);
 		if (pedido == null || !pedido.getCliente().getId().equals(clienteLogado.getId())) {
 			model.addAttribute("erro", "Pedido não encontrado");
 			return "redirect:/pedido/meus-pedidos";
 		}
-
 		model.addAttribute("pedido", pedido);
 		return "cliente/detalhe-pedido";
 	}
@@ -111,4 +112,46 @@ public class PedidoController {
 		}
 	}
 
+	@GetMapping("/estoquista/listar")
+	public String listarPedidosEstoquista(@RequestParam(required = false, defaultValue = "0") int page,
+			@RequestParam(required = false) String status, @RequestParam(required = false) String cliente,
+			Model model) {
+		PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "dataPedido"));
+		Page<Pedido> pedidosPage;
+		if ((status != null && !status.isEmpty()) || (cliente != null && !cliente.isEmpty())) {
+			pedidosPage = pedidoService.buscarPedidosComFiltros(status, cliente, pageRequest);
+		} else {
+			pedidosPage = pedidoRepository.findAll(pageRequest);
+		}
+		model.addAttribute("pedidos", pedidosPage.getContent());
+		model.addAttribute("paginaAtual", page);
+		model.addAttribute("totalPaginas", pedidosPage.getTotalPages());
+		model.addAttribute("statusFiltro", status);
+		model.addAttribute("clienteFiltro", cliente);
+		model.addAttribute("statusList", StatusPedido.values());
+		return "/administrativo/auth/estoquista/estoq-listar-pedidos";
+	}
+
+	@GetMapping("/estoquista/editar-status/{id}")
+	public String editarStatusPedido(@PathVariable("id") Long id, Model model) {
+		Pedido pedido = pedidoRepository.findByIdWithItems(id);
+		if (pedido == null) {
+			throw new IllegalArgumentException("Pedido inválido: " + id);
+		}
+		model.addAttribute("pedido", pedido);
+		model.addAttribute("statusList", StatusPedido.values());
+		return "/administrativo/auth/estoquista/estoq-editar-status-pedido";
+	}
+
+	@PostMapping("/estoquista/atualizar-status/{id}")
+	public String atualizarStatusPedido(@PathVariable("id") Long id, @RequestParam("status") StatusPedido novoStatus,
+			RedirectAttributes attributes) {
+		try {
+			pedidoService.atualizarStatus(id, novoStatus);
+			attributes.addFlashAttribute("mensagem", "Status do pedido atualizado com sucesso!");
+		} catch (Exception e) {
+			attributes.addFlashAttribute("erro", "Erro ao atualizar status: " + e.getMessage());
+		}
+		return "redirect:/pedido/estoquista/listar";
+	}
 }

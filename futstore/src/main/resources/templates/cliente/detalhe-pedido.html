@@ -92,10 +92,9 @@
                 <div class="card mb-4">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Resumo do Pedido</h5>
-                        <span class="order-status"
-                            th:classappend="${'status-' + #strings.toLowerCase(#strings.replace(pedido.status.name(), '_', '-'))}"
+                        <span class="badge bg-secondary px-3 py-2"
                             th:text="${#strings.replace(pedido.status.name(), '_', ' ')}">
-                            AGUARDANDO PAGAMENTO
+                            Status do Pedido
                         </span>
                     </div>
                     <div class="card-body">
@@ -115,53 +114,6 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="tracking-info mb-4">
-                            <h5 class="mb-3">Status do Pedido</h5>
-                            <div class="timeline">
-                                <div class="timeline-item completed">
-                                    <p class="mb-1"><strong>Pedido Recebido</strong></p>
-                                    <p class="text-muted"
-                                        th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy HH:mm')}">01/01/2025
-                                        14:30</p>
-                                </div>
-                                <div class="timeline-item"
-                                    th:classappend="${pedido.status.name() == 'AGUARDANDO_PAGAMENTO' ? 'active' : 
-                                                    (pedido.status.name() == 'PAGO' || pedido.status.name() == 'ENVIADO' || pedido.status.name() == 'ENTREGUE') ? 'completed' : ''}">
-                                    <p class="mb-1"><strong>Aguardando Pagamento</strong></p>
-                                    <p class="text-muted" th:if="${pedido.status.name() != 'AGUARDANDO_PAGAMENTO'}">Em
-                                        processamento</p>
-                                    <p class="text-muted" th:if="${pedido.status.name() == 'AGUARDANDO_PAGAMENTO'}">
-                                        <span
-                                            th:if="${pedido.pagamento.formaPagamento == T(com.futstore.futstore.modelo.FormaPagamento).BOLETO}">O
-                                            boleto estará disponível em breve</span>
-                                        <span
-                                            th:if="${pedido.pagamento.formaPagamento == T(com.futstore.futstore.modelo.FormaPagamento).CARTAO}">Processando
-                                            pagamento com cartão</span>
-                                    </p>
-                                </div>
-                                <div class="timeline-item"
-                                    th:classappend="${pedido.status.name() == 'PAGO' ? 'active' : 
-                                                    (pedido.status.name() == 'ENVIADO' || pedido.status.name() == 'ENTREGUE') ? 'completed' : ''}">
-                                    <p class="mb-1"><strong>Pagamento Confirmado</strong></p>
-                                    <p class="text-muted"
-                                        th:if="${pedido.status.name() == 'PAGO' || pedido.status.name() == 'ENVIADO' || pedido.status.name() == 'ENTREGUE'}">
-                                        Pagamento processado com sucesso</p>
-                                </div>
-                                <div class="timeline-item" th:classappend="${pedido.status.name() == 'ENVIADO' ? 'active' : 
-                                                    (pedido.status.name() == 'ENTREGUE') ? 'completed' : ''}">
-                                    <p class="mb-1"><strong>Enviado</strong></p>
-                                    <p class="text-muted"
-                                        th:if="${pedido.status.name() == 'ENVIADO' || pedido.status.name() == 'ENTREGUE'}">
-                                        Seu pedido foi enviado e está a caminho</p>
-                                </div>
-                                <div class="timeline-item"
-                                    th:classappend="${pedido.status.name() == 'ENTREGUE' ? 'active completed' : ''}">
-                                    <p class="mb-1"><strong>Entregue</strong></p>
-                                    <p class="text-muted" th:if="${pedido.status.name() == 'ENTREGUE'}">Seu pedido foi
-                                        entregue com sucesso</p>
-                                </div>
-                            </div>
-                        </div>
                         <h5 class="mb-3">Itens do Pedido</h5>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">

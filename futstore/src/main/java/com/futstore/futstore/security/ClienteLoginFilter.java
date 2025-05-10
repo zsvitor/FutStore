@@ -24,7 +24,8 @@ public class ClienteLoginFilter implements Filter {
 		String requestURI = httpRequest.getRequestURI();
 		if (requestURI.startsWith("/administrativo") || requestURI.startsWith("/usuario/administrador")
 				|| requestURI.startsWith("/auth/administrador") || requestURI.startsWith("/auth/estoquista")
-				|| requestURI.contains("login-process")) {
+				|| requestURI.startsWith("/produto/administrador") || requestURI.startsWith("/produto/estoquista")
+				|| requestURI.startsWith("/pedido/estoquista") || requestURI.contains("login-process")) {
 			chain.doFilter(request, response);
 			return;
 		}
@@ -34,8 +35,9 @@ public class ClienteLoginFilter implements Filter {
 				|| requestURI.startsWith("/cliente/login") || requestURI.startsWith("/cliente/cadastro")
 				|| requestURI.startsWith("/cliente/autenticar") || requestURI.startsWith("/produto/detalhe/")
 				|| requestURI.startsWith("/carrinho/");
-		boolean isClientResource = requestURI.startsWith("/pedido/") || requestURI.startsWith("/cliente/perfil")
-				|| requestURI.startsWith("/cliente/endereco") || requestURI.startsWith("/checkout/");
+		boolean isClientResource = requestURI.startsWith("/pedido/") && !requestURI.startsWith("/pedido/estoquista/")
+				|| requestURI.startsWith("/cliente/perfil") || requestURI.startsWith("/cliente/endereco")
+				|| requestURI.startsWith("/checkout/");
 		Cliente clienteLogado = null;
 		boolean isLoggedIn = false;
 		if (session != null) {
