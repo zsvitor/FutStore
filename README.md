@@ -9,14 +9,15 @@ Foi o meu **primeiro contato com Spring Boot**, trazendo **muita dor de cabeça 
 
 Para testar o sistema, siga os passos abaixo:
 
-### 1. Criação do Banco de Dados
+## Criação do Banco de Dados
 Execute os seguintes comandos no MySQL:
 
 ```sql
 create schema loja;
 use loja;
 select * from usuario;
+```
 
 Utilize o usuário administrador já definido:
-Gmail: admin@gmail.com
-Senha: 12345
+- Gmail: admin@gmail.com
+- Senha: 12345
