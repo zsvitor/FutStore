@@ -9,7 +9,7 @@ Foi o meu **primeiro contato com Spring Boot**, trazendo **muita dor de cabeça 
 
 Para testar o sistema, siga os passos abaixo:
 
-## Criação do Banco de Dados
+## 💾 Criação do Banco de Dados
 Execute os seguintes comandos no MySQL:
 
 ```sql
